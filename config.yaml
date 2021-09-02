@@ -10,14 +10,14 @@ params:
     subtitle: |-
       A RESPONSIVE SITE TEMPLATE DESIGNED BY HTML5 UP
       AND RELEASED UNDER THE CREATIVE COMMONS.
-    title: Hi, my name is Forty
+    title: Hi, my name is Sophia
   blog: {}
   contact:
     address:
-      - city: City, ST 00000
-        country: Country
-        street: Street
-        title: Address
+      - city: London
+        country: UK
+        street: Regent Park
+  #      title: Address
     buttonClear: Clear
     buttonSend: Send message
     email:
@@ -42,9 +42,9 @@ params:
         text: 'Design: '
         url: https://www.html5up.net
     social:
-      - icon: fa-twitter
-        label: Twitter
-        url: https://www.twitter.com
+    #  - icon: fa-twitter
+    #    label: Twitter
+    #    url: https://www.twitter.com
       - icon: fa-facebook
         label: Facebook
         url: https://www.facebook.com
