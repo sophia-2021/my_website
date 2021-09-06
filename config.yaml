@@ -8,9 +8,10 @@ params:
   banner:
     buttonText: Get Started
     subtitle: |-
-      A RESPONSIVE SITE TEMPLATE DESIGNED BY HTML5 UP
-      AND RELEASED UNDER THE CREATIVE COMMONS.
-    title: Hi, my name is Sophia
+      Click around and find out more about who I am, 
+      my work and my experiences so far, 
+      and my goals and aspirations for the future.
+    title: Welcome to my website 
   blog: {}
   contact:
     address:
@@ -56,7 +57,7 @@ params:
         url: https://github.com/sophia-2021
       - icon: fa-linkedin
         label: LinkedIn
-        url: hhttps://www.linkedin.com/in/sophia-kalusche/
+        url: https://www.linkedin.com/in/sophia-kalusche/
   image: ''
   name: Your name
   navigation:
@@ -82,12 +83,12 @@ params:
     enable: yes
     showcase:
       - image: pic01.jpg
-        subtitle: Ipsum Dolor Sit Amet
-        title: Aliquam
-        url: blogs/aliquam
+        subtitle: Brief introduction 
+        title: About me
+        url: blogs/sophia
       - image: pic02.jpg
-        subtitle: Feugiat Amet Tempus
-        title: Tempus
+        subtitle: Education and experiences
+        title: CV
         url: blogs/tempus
       - image: pic03.jpg
         subtitle: Lorem Etiam Nullam
