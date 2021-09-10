@@ -6,7 +6,6 @@ googleAnalytics: ''
 disqusShortname: ''
 params:
   banner:
-    image: Mountain.jpg
     buttonText: Get Started
     subtitle: |-
       Click around and find out more about who I am, 
