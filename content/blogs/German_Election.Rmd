@@ -176,7 +176,7 @@ german_polls %>%
   geom_text(aes(end_date[length(end_date)],5, label= "  electoral threshold", color = "grey", vjust=1, hjust=0.3), size=3) +
   
   #Set colors of legend 
-  scale_color_identity(name= "05 Sep 2021", breaks=c("black", "red", "blue", "green", "yellow", "purple"),
+  scale_color_identity(name= "10 Sep 2021", breaks=c("black", "red", "blue", "green", "yellow", "purple"),
                        labels=  c(union_rate, spd_rate, af_d_rate, grune_rate, fdp_rate, linke_rate),
                        guide = "legend") + 
   
@@ -201,7 +201,7 @@ german_polls %>%
                      labels = c("Jan 2021", "Apr", "Jul")) +
   
   #Label the graph
-  labs(caption = "Source: wahlrecht.de, last updated 05 Sep 2021",
+  labs(caption = "Source: wahlrecht.de, last updated 10 Sep 2021",
   title="German election poll tracker: who will be the next chancellor?",
   subtitle = "Find out who is leading the polling to succeed Angela Merkel as chancellor of Germany",
   x = "",
