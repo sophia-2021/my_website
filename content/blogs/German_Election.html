@@ -11,13 +11,13 @@ slug: german_election
 title: Germany election 2021 forecast
 ---
 
-<script src="German Election_files/header-attrs/header-attrs.js"></script>
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
 
 
 <div id="calculate-2-week-moving-average-of-opinion-polls-for-the-2021-german-elections" class="section level1">
 <h1>Calculate 2-week moving average of opinion polls for the 2021 German elections</h1>
 <p>The Guardian newspaper has an <a href="https://www.theguardian.com/world/2021/aug/20/german-election-poll-tracker-who-will-be-the-next-chancellor">election poll tracker for the upcoming German election</a>. The list of the opinion polls since Jan 2021 can be found at <a href="https://en.wikipedia.org/wiki/Opinion_polling_for_the_2021_German_federal_election">Wikipedia</a>. Here I will reproduce the graph with the following code. This is the picture from <a href="https://www.theguardian.com/world/2021/aug/20/german-election-poll-tracker-who-will-be-the-next-chancellor">The Guardian</a> that is replicated with the code. However, we choose to only plot the values for 2021. We keep the update date fixed at 10. September 2021 for simplicity.</p>
-<p><img src="images/german_election.jpg" width="100%" style="display: block; margin: auto;" /></p>
+<p><img src="../blogs/german_election.jpg" width="100%" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>url &lt;- &quot;https://en.wikipedia.org/wiki/Opinion_polling_for_the_2021_German_federal_election&quot;
 
 # get tables that exist on wikipedia page 
@@ -172,5 +172,5 @@ german_polls %&gt;%
   x = &quot;&quot;,
   y = &quot;&quot;) + 
   NULL</code></pre>
-<p><img src="/blogs/German%20Election_files/figure-html/create%20table%20german%20polls,%20-1.png" width="90%" style="display: block; margin: auto;" /></p>
+<p><img src="/blogs/German_Election_files/figure-html/create%20table%20german%20polls,%20-1.png" width="90%" style="display: block; margin: auto;" /></p>
 </div>

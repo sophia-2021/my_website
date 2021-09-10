@@ -50,7 +50,10 @@ library(pracma)
 The Guardian newspaper has an [election poll tracker for the upcoming German election](https://www.theguardian.com/world/2021/aug/20/german-election-poll-tracker-who-will-be-the-next-chancellor). The list of the opinion polls since Jan 2021 can be found at [Wikipedia](https://en.wikipedia.org/wiki/Opinion_polling_for_the_2021_German_federal_election). Here I will reproduce the graph with the following code. This is the picture from [The Guardian](https://www.theguardian.com/world/2021/aug/20/german-election-poll-tracker-who-will-be-the-next-chancellor) that is replicated with the code. However, we choose to only plot the values for 2021. We keep the update date fixed at 10. September 2021 for simplicity. 
 
 ```{r picture, echo=FALSE, out.width="100%"}
-knitr::include_graphics(here::here("images", "german_election"), error = FALSE)
+#knitr::include_graphics(here::here("images", "german_election.jpg"), error = FALSE)
+#knitr::include_graphics(![](/blogs/German_Election_files/german_election.jpg))
+#knitr::include_graphics('/images/german_election.jpg')
+knitr::include_graphics('../blogs/german_election.jpg')
 ```
 
 
