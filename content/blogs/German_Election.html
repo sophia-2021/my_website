@@ -16,7 +16,7 @@ title: Germany election 2021 forecast
 
 <div id="calculate-2-week-moving-average-of-opinion-polls-for-the-2021-german-elections" class="section level1">
 <h1>Calculate 2-week moving average of opinion polls for the 2021 German elections</h1>
-<p>The Guardian newspaper has an <a href="https://www.theguardian.com/world/2021/aug/20/german-election-poll-tracker-who-will-be-the-next-chancellor">election poll tracker for the upcoming German election</a>. The list of the opinion polls since Jan 2021 can be found at <a href="https://en.wikipedia.org/wiki/Opinion_polling_for_the_2021_German_federal_election">Wikipedia</a>. Here I will reproduce the graph with the following code. This is the picture from <a href="https://www.theguardian.com/world/2021/aug/20/german-election-poll-tracker-who-will-be-the-next-chancellor">The Guardian</a> that is replicated with the code. However, we choose to only plot the values for 2021. We keep the update date fixed at 10. September 2021 for simplicity.</p>
+<p>The Guardian newspaper has an <a href="https://www.theguardian.com/world/2021/aug/20/german-election-poll-tracker-who-will-be-the-next-chancellor">election poll tracker for the upcoming German election</a>. The list of the opinion polls since Jan 2021 can be found at <a href="https://en.wikipedia.org/wiki/Opinion_polling_for_the_2021_German_federal_election">Wikipedia</a>. Here I will reproduce the graph with the following code. This is the picture from <a href="https://www.theguardian.com/world/2021/aug/20/german-election-poll-tracker-who-will-be-the-next-chancellor">The Guardian</a> that is replicated with the code. However, we choose to only plot the values for 2021.</p>
 <p>Graph we will replicate:</p>
 <p><img src="/img/german_election.jpg" width="100%" style="display: block; margin: auto;" /></p>
 <p>Code:</p>
@@ -41,7 +41,7 @@ german_election_polls &lt;- polls[[1]] %&gt;% # the first table on the page cont
   mutate(
          # polls are shown to run from-to, e.g. 9-13 Aug 2021. We keep the last date, 13 Aug here, as the poll date
          # and we extract it by picking the last 11 characters from that field
-         end_date = &quot;10-09-2021&quot;,
+         end_date = str_sub(fieldwork_date, -11),
          
          # end_date is still a string, so we convert it into a date object using lubridate::dmy()
          end_date = dmy(end_date),
@@ -84,16 +84,16 @@ german_polls</code></pre>
 <pre><code>## # A tibble: 225 × 22
 ##    polling_firm        end_date   samplesize union   spd  af_d   fdp linke grune
 ##    &lt;chr&gt;               &lt;date&gt;          &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-##  1 Forschungsgruppe W… 2021-09-10       1281  22      25    11  11     6    17  
-##  2 Kantar              2021-09-10       1901  21      25    12  12     6    17  
-##  3 Wahlkreisprognose   2021-09-10       1208  19      28    11  12     6    14  
-##  4 Civey               2021-09-10      10082  23      25    11  11     6    17  
-##  5 YouGov              2021-09-10       1700  21      26    12  10     6    15  
-##  6 Allensbach          2021-09-10       1258  25      27    11   9.5   6    15.5
-##  7 INSA                2021-09-10       2052  20.5    26    11  12.5   6.5  15.5
-##  8 GMS                 2021-09-10       1004  23      25    11  12     6    17  
-##  9 Forsa               2021-09-10       2505  19      25    11  13     6    17  
-## 10 INSA                2021-09-10       1427  20      25    12  13     7    16  
+##  1 Forschungsgruppe W… 2021-09-09       1281  22      25    11  11     6    17  
+##  2 Kantar              2021-09-09       1901  21      25    12  12     6    17  
+##  3 Wahlkreisprognose   2021-09-08       1208  19      28    11  12     6    14  
+##  4 Civey               2021-09-08      10082  23      25    11  11     6    17  
+##  5 YouGov              2021-09-07       1700  21      26    12  10     6    15  
+##  6 Allensbach          2021-09-07       1258  25      27    11   9.5   6    15.5
+##  7 INSA                2021-09-06       2052  20.5    26    11  12.5   6.5  15.5
+##  8 GMS                 2021-09-06       1004  23      25    11  12     6    17  
+##  9 Forsa               2021-09-06       2505  19      25    11  13     6    17  
+## 10 INSA                2021-09-03       1427  20      25    12  13     7    16  
 ## # … with 215 more rows, and 13 more variables: union_votes &lt;dbl&gt;,
 ## #   spd_votes &lt;dbl&gt;, af_d_votes &lt;dbl&gt;, fdp_votes &lt;dbl&gt;, linke_votes &lt;dbl&gt;,
 ## #   grune_votes &lt;dbl&gt;, samplesizem &lt;dbl&gt;, unionm &lt;dbl&gt;, spdm &lt;dbl&gt;,
@@ -143,9 +143,9 @@ german_polls %&gt;%
   geom_text(aes(end_date[length(end_date)],5, label= &quot;  electoral threshold&quot;, color = &quot;grey&quot;, vjust=1, hjust=0.3), size=3) +
   
   #Set colors of legend 
-  scale_color_identity(name= &quot;10 Sep 2021&quot;, breaks=c(&quot;black&quot;, &quot;red&quot;, &quot;blue&quot;, &quot;green&quot;, &quot;yellow&quot;, &quot;purple&quot;),
+  scale_color_identity(name= &quot;05 Sep 2021&quot;, breaks=c(&quot;black&quot;, &quot;red&quot;, &quot;blue&quot;, &quot;green&quot;, &quot;yellow&quot;, &quot;purple&quot;),
                        labels=  c(union_rate, spd_rate, af_d_rate, grune_rate, fdp_rate, linke_rate),
-                       guide = &quot;legend&quot;) + #Create a legend 
+                       guide = &quot;legend&quot;) + 
   
   theme_bw() +
   
@@ -168,7 +168,7 @@ german_polls %&gt;%
                      labels = c(&quot;Jan 2021&quot;, &quot;Apr&quot;, &quot;Jul&quot;)) +
   
   #Label the graph
-  labs(caption = &quot;Source: wahlrecht.de, last updated 10 Sep 2021&quot;,
+  labs(caption = &quot;Source: wahlrecht.de, last updated 05 Sep 2021&quot;,
   title=&quot;German election poll tracker: who will be the next chancellor?&quot;,
   subtitle = &quot;Find out who is leading the polling to succeed Angela Merkel as chancellor of Germany&quot;,
   x = &quot;&quot;,
