@@ -1,4 +1,4 @@
-baseURL: https://sophia-2021-portfolio.netlify.app/
+sbaseURL: https://sophia-2021-portfolio.netlify.app/
 languageCode: en-us
 title: Portfolio website for Sophia 
 theme: forty
@@ -82,38 +82,33 @@ params:
   tiles:
     enable: yes
     showcase:
-      - image: pic01.jpg
+      - image: journey.jpg
         subtitle: Brief introduction 
         title: About me
         url: blogs/sophia
-      - image: pic02.jpg
+      - image: computer.jpg
         subtitle: Education and experiences
         title: CV
-        url: blogs/tempus
-      - image: pic03.jpg
-        subtitle: Germany election 2021 
-        title: Graphs and analysis 
-        url: blogs/magna
-      - image: pic04.jpg
-        subtitle: Nisl Sed Aliquam
-        title: Ipsum
-        url: blogs/ipsum
-      - image: pic05.jpg
-        subtitle: Ipsum Dolor Sit Amet
-        title: Consequat
-        url: blogs/ipsum
-      - image: pic06.jpg
-        subtitle: Feugiat Amet Tempus
-        title: Etiam
-        url: blogs/ipsum
+        url: blogs/cv
+      - image: Germany.jpg
+        subtitle: Graphing moving average of several forecasts
+        title: Germany election 2021 forecast
+        url: blogs/german_election
+      - image: DC.jpg
+        subtitle: Analysis of approval rate since start of presidency 
+        title: Popularity of President Biden over time 
+        url: blogs/biden_popularity
+      - image: London.jpg
+        subtitle: Breakdown of voting tendency by party 
+        title: Political affiliation and Brexit voting 
+        url: blogs/brexit_and_political_party
+      - image: bike.jpg
+        subtitle: Visualizing excess monthly and weekly rentals 
+        title: TfL bike sharing
+        url: blogs/bike_sharing
   two:
-    buttonText: Get Started
+    buttonText: Explore
     enable: yes
-    subtitle: "Nullam et orci eu lorem consequat tincidunt vivamus et sagittis libero.
-      \n    Mauris aliquet magna magna sed nunc rhoncus pharetra. \n    Pellentesque
-      condimentum sem. In efficitur ligula tate urna. Maecenas laoreet massa vel lacinia
-      pellentesque lorem ipsum dolor. \n    Nullam et orci eu lorem consequat tincidunt.
-      Vivamus et sagittis libero.\n    Mauris aliquet magna magna sed nunc rhoncus
-      amet pharetra et feugiat tempus."
-    title: Massa libero
+    subtitle: "Click around or get in touch to learn more about me."
+    title: Interested to leran more?
     url: blogs
