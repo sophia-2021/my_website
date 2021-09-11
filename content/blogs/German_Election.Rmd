@@ -55,7 +55,6 @@ Graph we will replicate:
 knitr::include_graphics("/img/german_election.jpg", error = FALSE)
 ```
 
-
 Code: 
 ```{r, scrape_wikipedia_polling_data, warnings= FALSE, message=FALSE}
 
