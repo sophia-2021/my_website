@@ -18,7 +18,7 @@ title: Germany election 2021 forecast
 <h1>Calculate 2-week moving average of opinion polls for the 2021 German elections</h1>
 <p>The Guardian newspaper has an <a href="https://www.theguardian.com/world/2021/aug/20/german-election-poll-tracker-who-will-be-the-next-chancellor">election poll tracker for the upcoming German election</a>. The list of the opinion polls since Jan 2021 can be found at <a href="https://en.wikipedia.org/wiki/Opinion_polling_for_the_2021_German_federal_election">Wikipedia</a>. Here I will reproduce the graph with the following code. This is the picture from <a href="https://www.theguardian.com/world/2021/aug/20/german-election-poll-tracker-who-will-be-the-next-chancellor">The Guardian</a> that is replicated with the code. However, we choose to only plot the values for 2021.</p>
 <p>Graph we will replicate:</p>
-<p><img src="/img/german_election.jpg" width="100%" style="display: block; margin: auto;" /></p>
+<p><img src="/img/german_election.png" width="70%" style="display: block; margin: auto;" /></p>
 <p>Code:</p>
 <pre class="r"><code>url &lt;- &quot;https://en.wikipedia.org/wiki/Opinion_polling_for_the_2021_German_federal_election&quot;
 
@@ -81,20 +81,20 @@ german_election_polls &lt;- polls[[1]] %&gt;% # the first table on the page cont
          )
 
 german_polls</code></pre>
-<pre><code>## # A tibble: 225 × 22
+<pre><code>## # A tibble: 226 × 22
 ##    polling_firm        end_date   samplesize union   spd  af_d   fdp linke grune
 ##    &lt;chr&gt;               &lt;date&gt;          &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-##  1 Forschungsgruppe W… 2021-09-09       1281  22      25    11  11     6    17  
-##  2 Kantar              2021-09-09       1901  21      25    12  12     6    17  
-##  3 Wahlkreisprognose   2021-09-08       1208  19      28    11  12     6    14  
-##  4 Civey               2021-09-08      10082  23      25    11  11     6    17  
-##  5 YouGov              2021-09-07       1700  21      26    12  10     6    15  
-##  6 Allensbach          2021-09-07       1258  25      27    11   9.5   6    15.5
-##  7 INSA                2021-09-06       2052  20.5    26    11  12.5   6.5  15.5
-##  8 GMS                 2021-09-06       1004  23      25    11  12     6    17  
-##  9 Forsa               2021-09-06       2505  19      25    11  13     6    17  
-## 10 INSA                2021-09-03       1427  20      25    12  13     7    16  
-## # … with 215 more rows, and 13 more variables: union_votes &lt;dbl&gt;,
+##  1 INSA                2021-09-10       1152  20      26    11  13     6    15  
+##  2 Forschungsgruppe W… 2021-09-09       1281  22      25    11  11     6    17  
+##  3 Kantar              2021-09-09       1901  21      25    12  12     6    17  
+##  4 Wahlkreisprognose   2021-09-08       1208  19      28    11  12     6    14  
+##  5 Civey               2021-09-08      10082  23      25    11  11     6    17  
+##  6 YouGov              2021-09-07       1700  21      26    12  10     6    15  
+##  7 Allensbach          2021-09-07       1258  25      27    11   9.5   6    15.5
+##  8 INSA                2021-09-06       2052  20.5    26    11  12.5   6.5  15.5
+##  9 GMS                 2021-09-06       1004  23      25    11  12     6    17  
+## 10 Forsa               2021-09-06       2505  19      25    11  13     6    17  
+## # … with 216 more rows, and 13 more variables: union_votes &lt;dbl&gt;,
 ## #   spd_votes &lt;dbl&gt;, af_d_votes &lt;dbl&gt;, fdp_votes &lt;dbl&gt;, linke_votes &lt;dbl&gt;,
 ## #   grune_votes &lt;dbl&gt;, samplesizem &lt;dbl&gt;, unionm &lt;dbl&gt;, spdm &lt;dbl&gt;,
 ## #   af_dm &lt;dbl&gt;, fdpm &lt;dbl&gt;, linkem &lt;dbl&gt;, grunem &lt;dbl&gt;</code></pre>
@@ -174,5 +174,5 @@ german_polls %&gt;%
   x = &quot;&quot;,
   y = &quot;&quot;) + 
   NULL</code></pre>
-<p><img src="/blogs/German_Election_files/figure-html/create%20table%20german%20polls,%20-1.png" width="90%" style="display: block; margin: auto;" /></p>
+<p><img src="/blogs/German_Election_files/figure-html/create%20table%20german%20polls,%20-1.png" width="80%" style="display: block; margin: auto;" /></p>
 </div>

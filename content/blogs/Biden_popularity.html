@@ -14,6 +14,137 @@ title: Popularity of President Biden over time
 <script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
 
 
-<div id="analysis-of-president-bidens-popularity-over-time" class="section level2">
-<h2>Analysis of President Biden’s popularity over time</h2>
+<div id="analysis-of-president-bidens-popularity-over-time" class="section level1">
+<h1>Analysis of President Biden’s popularity over time</h1>
+<p>In this section, we will visualize President Biden’s approval rate since his first day in office at the beginning of 2021. We will load the data from fivethirtyeight.com as it has detailed data on <a href="https://projects.fivethirtyeight.com/biden-approval-ratings">all polls that track the president’s approval</a></p>
+<div id="load-the-data" class="section level2">
+<h2>Load the data</h2>
+<pre class="r"><code># Import approval polls data directly off fivethirtyeight website
+approval_pollist &lt;- read_csv(&#39;https://projects.fivethirtyeight.com/biden-approval-data/approval_polllist.csv&#39;) </code></pre>
+<pre><code>## Rows: 1597 Columns: 22</code></pre>
+<pre><code>## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## chr (12): president, subgroup, modeldate, startdate, enddate, pollster, grad...
+## dbl  (9): samplesize, weight, influence, approve, disapprove, adjusted_appro...
+## lgl  (1): tracking</code></pre>
+<pre><code>## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<pre class="r"><code>glimpse(approval_pollist)</code></pre>
+<pre><code>## Rows: 1,597
+## Columns: 22
+## $ president           &lt;chr&gt; &quot;Joseph R. Biden Jr.&quot;, &quot;Joseph R. Biden Jr.&quot;, &quot;Jos…
+## $ subgroup            &lt;chr&gt; &quot;All polls&quot;, &quot;All polls&quot;, &quot;All polls&quot;, &quot;All polls&quot;…
+## $ modeldate           &lt;chr&gt; &quot;9/10/2021&quot;, &quot;9/10/2021&quot;, &quot;9/10/2021&quot;, &quot;9/10/2021&quot;…
+## $ startdate           &lt;chr&gt; &quot;1/24/2021&quot;, &quot;1/24/2021&quot;, &quot;1/25/2021&quot;, &quot;1/25/2021&quot;…
+## $ enddate             &lt;chr&gt; &quot;1/26/2021&quot;, &quot;1/27/2021&quot;, &quot;1/27/2021&quot;, &quot;1/26/2021&quot;…
+## $ pollster            &lt;chr&gt; &quot;Rasmussen Reports/Pulse Opinion Research&quot;, &quot;Maris…
+## $ grade               &lt;chr&gt; &quot;B&quot;, &quot;A&quot;, &quot;B&quot;, &quot;B&quot;, &quot;B&quot;, &quot;B&quot;, &quot;B&quot;, &quot;B+&quot;, &quot;B&quot;, &quot;B&quot;,…
+## $ samplesize          &lt;dbl&gt; 1500.00, 1313.00, 1500.00, 2200.00, 15000.00, 9211…
+## $ population          &lt;chr&gt; &quot;lv&quot;, &quot;a&quot;, &quot;lv&quot;, &quot;a&quot;, &quot;a&quot;, &quot;a&quot;, &quot;lv&quot;, &quot;a&quot;, &quot;a&quot;, &quot;a…
+## $ weight              &lt;dbl&gt; 0.32248994, 2.18932620, 0.30253321, 0.12049488, 0.…
+## $ influence           &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+## $ approve             &lt;dbl&gt; 48.00000, 49.00000, 49.00000, 58.00000, 54.00000, …
+## $ disapprove          &lt;dbl&gt; 48.0, 35.0, 48.0, 32.0, 31.0, 31.5, 45.0, 37.0, 32…
+## $ adjusted_approve    &lt;dbl&gt; 50.42358, 50.02881, 51.42358, 56.53645, 52.53645, …
+## $ adjusted_disapprove &lt;dbl&gt; 41.93539, 34.63727, 41.93539, 35.37104, 34.37104, …
+## $ multiversions       &lt;chr&gt; NA, NA, NA, NA, NA, &quot;*&quot;, NA, NA, NA, NA, NA, NA, N…
+## $ tracking            &lt;lgl&gt; TRUE, NA, TRUE, NA, TRUE, TRUE, TRUE, NA, TRUE, NA…
+## $ url                 &lt;chr&gt; &quot;https://www.rasmussenreports.com/public_content/p…
+## $ poll_id             &lt;dbl&gt; 74261, 74320, 74268, 74346, 74277, 74292, 74290, 7…
+## $ question_id         &lt;dbl&gt; 139433, 139558, 139483, 139653, 139497, 139518, 13…
+## $ createddate         &lt;chr&gt; &quot;1/27/2021&quot;, &quot;2/1/2021&quot;, &quot;1/28/2021&quot;, &quot;2/5/2021&quot;, …
+## $ timestamp           &lt;chr&gt; &quot;18:35:08 10 Sep 2021&quot;, &quot;18:35:08 10 Sep 2021&quot;, &quot;1…</code></pre>
+<pre class="r"><code># Use `lubridate` to fix dates, as they are given as characters.
+approval_pollist &lt;- approval_pollist %&gt;% 
+  mutate(modeldate = lubridate::mdy(modeldate), 
+         startdate = lubridate::mdy(startdate), 
+          enddate = lubridate::mdy(enddate), 
+          createddate = lubridate::mdy(createddate))</code></pre>
+</div>
+<div id="create-a-plot" class="section level2">
+<h2>Create a plot</h2>
+<p>We calculate the average net approval rate (approve- disapprove) for each week since President Biden got into office. Then we plot the net approval, along with its 95% confidence interval. We use the ‘enddate’ as date and facet by the subgroup to see the difference between adults, voters and all polls.</p>
+<pre class="r"><code># Create confidence levels
+approval_margins &lt;- approval_pollist %&gt;%
+  
+  #Select enddate
+  filter(!is.na(enddate)) %&gt;%
+  mutate(week=isoweek(enddate)) %&gt;%
+  
+  #Group the data
+  group_by(week, subgroup) %&gt;%
+  
+  #Summarize data (use se formula for differences)
+  summarise(
+    number = n(),
+    net_approval_rate = mean(adjusted_approve)-mean(adjusted_disapprove),
+    sd_approve = sd(adjusted_approve),
+    sd_disapprove = sd(adjusted_disapprove),
+    se = sqrt((sd_approve)**2/number+((sd_disapprove)**2/number)),
+    t_critical=qt(0.975, number- 1 ),
+            lower = net_approval_rate- (t_critical*se),
+            upper = net_approval_rate+ (t_critical*se))</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;week&#39;. You can override using the `.groups` argument.</code></pre>
+<pre class="r"><code>glimpse(approval_margins)</code></pre>
+<pre><code>## Rows: 99
+## Columns: 10
+## Groups: week [33]
+## $ week              &lt;dbl&gt; 4, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7, 8, 8, 8, 9, 9, 9…
+## $ subgroup          &lt;chr&gt; &quot;Adults&quot;, &quot;All polls&quot;, &quot;Voters&quot;, &quot;Adults&quot;, &quot;All poll…
+## $ number            &lt;int&gt; 9, 16, 9, 14, 23, 12, 12, 19, 9, 13, 25, 14, 13, 26,…
+## $ net_approval_rate &lt;dbl&gt; 19.17343, 16.30575, 14.95819, 17.16960, 15.90139, 15…
+## $ sd_approve        &lt;dbl&gt; 1.752640, 2.138042, 2.680897, 2.602285, 2.676196, 2.…
+## $ sd_disapprove     &lt;dbl&gt; 1.002730, 2.692060, 3.389945, 1.119173, 2.039548, 2.…
+## $ se                &lt;dbl&gt; 0.6730704, 0.8594479, 1.4406380, 0.7570826, 0.701606…
+## $ t_critical        &lt;dbl&gt; 2.306004, 2.131450, 2.306004, 2.160369, 2.073873, 2.…
+## $ lower             &lt;dbl&gt; 17.621326, 14.473882, 11.636071, 15.534025, 14.44635…
+## $ upper             &lt;dbl&gt; 20.72553, 18.13762, 18.28031, 18.80518, 17.35644, 17…</code></pre>
+<pre class="r"><code>#Create the graph
+approval_margins  %&gt;%
+  ggplot(aes(x=week, y=net_approval_rate)) +
+  
+  #Set colors 
+  geom_point(color=&quot;chocolate2&quot;, size=1) +
+  geom_line(color=&quot;chocolate2&quot;)+
+  
+  #Add fill between lines
+  geom_ribbon(aes(ymin=lower, ymax=upper),
+              color=&quot;chocolate2&quot;, 
+              fill=&quot;grey87&quot;, 
+              linetype=1, 
+              alpha=0.5, 
+              size=0.3) +
+  
+  #Change limits, theme, scale, facet wrap and add fitted line 
+  ylim(c(-15,50)) +
+  theme_bw() +
+  scale_x_continuous(breaks=seq(0, 35, 13))+
+  scale_y_continuous(breaks=seq(-15, 10, 2.5))+
+  facet_wrap(~subgroup)+
+  geom_smooth(se=FALSE) +
+  
+  #Add horizontal line 
+  geom_hline(yintercept=0, 
+             linetype=&quot;solid&quot;,
+             color = &quot;chocolate2&quot;, 
+             size=1) +
+  
+  #Add labels 
+  labs( caption= &quot;Source: fivethirtyeight.com &quot;,
+        title= &quot;Estimating Approval Margins (approve-disapprove) for Joe Biden&quot;,
+        subtitle = &quot;Weekly average of all polls&quot;,
+        x = &quot;Week of the year&quot;,
+        y = &quot;Average Approval Margin (approve-disapprove&quot;) +
+  NULL</code></pre>
+<pre><code>## Scale for &#39;y&#39; is already present. Adding another scale for &#39;y&#39;, which will
+## replace the existing scale.</code></pre>
+<pre><code>## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</code></pre>
+<p><img src="/blogs/Biden_popularity_files/figure-html/Bidens%20Approval%20Margins-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="analysis" class="section level2">
+<h2>Analysis</h2>
+<p>Looking at the confidence interval, we can see that its size greatly differ between week 4 and week 25. One of the reasons for this is that the sample set size differs between week 4 and week 25. The sample size on week 4 is much smaller than that of week 25 which is why the standard error is relatively higher in week 4. This leads to larger confidence intervals in week 4 compared to week 25.
+As far as the data across the weeks is concerned, as sample size increases - confidence intervals shrink. The approval ratings for Joe Biden have reduced between week 4 and 25.</p>
+</div>
 </div>

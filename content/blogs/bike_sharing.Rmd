@@ -3,7 +3,7 @@ categories:
 - ""
 - ""
 date: "2017-10-31T22:42:51-05:00"
-description: Visualizing excess monthly and weekly rentals 
+description: Visualizing excess monthly and weekly rentals. 
 draft: false
 image: bike_2.jpg
 keywords: ""
@@ -13,3 +13,160 @@ title: TfL bike sharing
 
 ## Visualizing excess monthly and weekly rentals of TfL bikes
 
+```{r load-libraries, include=FALSE}
+library(tidyverse)  # Load ggplot2, dplyr, and all the other tidyverse packages
+library(mosaic)
+library(ggthemes)
+library(lubridate)
+library(here)
+library(skimr)
+library(janitor)
+library(httr)
+library(readxl)
+library(vroom)
+```
+
+We will us TfL data on how many bikes were hired every single day to analyse the average monthly and weekly deviation from a three year average. We use year 2016-2019 to calculate the combarable monthly and weekly average and then plot the actual monthly and weekly average from 2016-present against that comparable average line. We can get the latest data by running the following:
+
+```{r, get_tfl_data, cache=TRUE}
+url <- "https://data.london.gov.uk/download/number-bicycle-hires/ac29363e-e0cb-47cc-a97a-e216d900a6b0/tfl-daily-cycle-hires.xlsx"
+
+# Download TFL data to temporary file
+httr::GET(url, write_disk(bike.temp <- tempfile(fileext = ".xlsx")))
+
+# Use read_excel to read it as dataframe
+bike0 <- read_excel(bike.temp,
+                   sheet = "Data",
+                   range = cell_cols("A:B"))
+
+# change dates to get year, month, and week
+bike <- bike0 %>% 
+  clean_names() %>% 
+  rename (bikes_hired = number_of_bicycle_hires) %>% 
+  mutate (year = year(day),
+          month = lubridate::month(day, label = TRUE),
+          week = isoweek(day))
+```
+
+First, we focus on the monthly rentals and plot the excess rentals (expected-actual rentals) faceted by year. The green coloring signals that in a particular time period there was more demand than anticipated while red means that there was less. 
+
+```{r montly change in bikes , fig.height = 6, fig.width = 8, fig.align= "center"}
+
+# Calculate monthly bike change 
+monthly_expected_rentals <- bike %>% 
+  filter(year %in% c(2016,2017,2018,2019)) %>%  
+  group_by(month) %>% 
+  summarize(expected_rentals=mean(bikes_hired))
+
+# Calculate actual monthly rentals mean
+monthly_actual_rentals <- bike %>% 
+  filter(year %in% c(2016,2017,2018,2019,2020,2021)) %>%  
+  group_by(year, month) %>% 
+  summarize(actual_rentals=mean(bikes_hired))
+
+df <- inner_join(monthly_expected_rentals, monthly_actual_rentals) %>% 
+  mutate(up = case_when((actual_rentals - expected_rentals) > 0 
+                        ~ actual_rentals - expected_rentals, 
+                        (actual_rentals - expected_rentals) <= 0 
+                        ~ 0), 
+         down = case_when((expected_rentals - actual_rentals) > 0 
+                        ~ expected_rentals - actual_rentals, 
+                        (expected_rentals - actual_rentals) <= 0 
+                        ~ 0))
+# Create the graph
+ggplot(df, aes(month, expected_rentals, group=1)) +
+  geom_line(color="blue") +
+  geom_line(aes(month, actual_rentals)) +
+  facet_wrap(~year) +
+  theme(axis.text.x = element_text(size = 5)) +
+  ylim(15000, 45000) +
+  
+  #Filling of graph 
+  geom_ribbon(aes(ymin=expected_rentals,ymax=expected_rentals+up), 
+              fill="#7DCD85",
+              alpha=0.4) +
+  geom_ribbon(aes(ymin=expected_rentals,
+                  ymax=expected_rentals-down), 
+              fill="#CB454A",
+              alpha=0.4) +
+  
+  theme_minimal() + 
+  
+  #Label the graph 
+  labs(
+    title = "Monthly changes in TfL bik rentals",
+    subtitle = "Change from monthly average shown in blue
+and calculated between 2016-2019",
+    caption = "Source: TfL, London Data Store",
+    x = "",
+    y = "Bike rentals") +
+  NULL
+
+```
+
+Secondly, we look at the weekly average rentals. We shade the graph to signal the different quaters of a year. Additionally, we here look at percentage change from the expected level of weekly rentals rather than the absolute number of rentals as before. 
+
+````{r weekly change in bikes, fig.height = 6, fig.width = 10, fig.align= "center" }
+
+# Calculate weekly bike change average
+weekly_expected_rentals <- bike %>% 
+  filter(year %in% c(2016,2017,2018,2019)) %>%  
+  group_by(week) %>% 
+  summarize(expected_rentals=mean(bikes_hired))
+
+# Calculate actual weekly bike change average
+weekly_actual_rentals <- bike %>% 
+  filter(year %in% c(2016,2017,2018,2019,2020,2021)) %>%  
+  group_by(year, week) %>% 
+  summarize(actual_rentals=mean(bikes_hired))
+
+df1 <- inner_join(weekly_expected_rentals, weekly_actual_rentals) %>% 
+  mutate(change = 100 * (actual_rentals - expected_rentals) / expected_rentals, 
+         up = case_when(change > 0 
+                        ~ change, 
+                        change <= 0 
+                        ~ 0), 
+         down = case_when(change > 0 
+                        ~ 0, 
+                        change <= 0 
+                        ~ change), 
+         type = case_when(down == 0 ~ "up",
+                          up == 0 ~ "down"))
+
+# Create the graph
+ggplot(df1[1:292,], aes(week, change, group=1)) +
+  
+  #Create gray background
+  geom_rect(aes(xmin=13,xmax=26),
+            ymin=-Inf,ymax=Inf, fill="#E5E7E9", alpha=0.035) +
+  geom_rect(aes(xmin=39,xmax=53),
+            ymin=-Inf,ymax=Inf, fill="#E5E7E9", alpha=0.035) +
+  geom_line() +
+  
+  #Create filling between graph 
+  geom_ribbon(aes(ymin=0,ymax=up),fill="#7DCD85",alpha=0.4) +
+  geom_ribbon(aes(ymin=0,ymax=down),fill="#CB454A",alpha=0.4) +
+  
+  #Create tickmarks at the side and set their color 
+  geom_rug(aes(color=type), sides = "b", 
+           length = unit(0.04, "npc"), show.legend = FALSE) +
+  scale_color_manual(values = c("#CB454A", "#7DCD85"))+
+  
+  #Facet, change theme and set scale 
+  facet_wrap(~year) +
+  theme_minimal() + 
+  scale_y_continuous(labels = c("-50%","0%","50%","100%")) +
+  scale_x_continuous(breaks = c(13,26,39,53), 
+                   labels = c("13","26","39","53")) +
+  
+  #Label graph 
+  labs(
+    title = "Weekly changes in TfL bike rentals",
+    subtitle = "%change from weekly averages 
+  calculated between 2016-2019",
+    caption = "Source: TfL, London Data Store",
+    x = "week",
+    y = "") +
+  NULL
+
+```
