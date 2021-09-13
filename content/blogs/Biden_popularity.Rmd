@@ -13,7 +13,7 @@ title: Popularity of President Biden over time
 
 # Analysis of President Biden's popularity over time 
 
-In this section, we will visualize President Biden's approval rate since his first day in office at the beginning of 2021. We will load the data from fivethirtyeight.com as it has detailed data on [all polls that track the president's approval ](https://projects.fivethirtyeight.com/biden-approval-ratings)
+In this section, we will visualize President Biden's approval rate since his first day in office at the beginning of 2021. We do this to analysis how his popularity has changed over time of his inaguration. We will load the data from [fivethirtyeight.com](https://projects.fivethirtyeight.com/biden-approval-ratings) as it has detailed data on all polls that track the president's approval.
 
 ```{r load-libraries, include=FALSE}
 library(tidyverse)  # Load ggplot2, dplyr, and all the other tidyverse packages
@@ -29,7 +29,7 @@ library(vroom)
 ```
 
 ## Load the data 
-
+Fist we load the data and change the date type to lubridate.
 ```{r, cache=TRUE}
 
 # Import approval polls data directly off fivethirtyeight website
@@ -56,7 +56,8 @@ approval_margins <- approval_pollist %>%
   
   #Select enddate
   filter(!is.na(enddate)) %>%
-  mutate(week=isoweek(enddate)) %>%
+  mutate(week=isoweek(enddate),
+         net_approval_rate = adjusted_approve-adjusted_disapprove) %>% 
   
   #Group the data
   group_by(week, subgroup) %>%
@@ -64,54 +65,54 @@ approval_margins <- approval_pollist %>%
   #Summarize data (use se formula for differences)
   summarise(
     number = n(),
-    net_approval_rate = mean(adjusted_approve)-mean(adjusted_disapprove),
-    sd_approve = sd(adjusted_approve),
-    sd_disapprove = sd(adjusted_disapprove),
-    se = sqrt((sd_approve)**2/number+((sd_disapprove)**2/number)),
-    t_critical=qt(0.975, number- 1 ),
-            lower = net_approval_rate- (t_critical*se),
-            upper = net_approval_rate+ (t_critical*se))
+    mean_net_approval_rate = mean(net_approval_rate, na.rm=TRUE),
+    sd_net = sd(net_approval_rate, na.rm=TRUE),
+    se = sd_net/sqrt(number),
+    t_critical=qt(0.975, number- 1),
+            lower_ci = mean_net_approval_rate - (t_critical*se),
+            upper_ci = mean_net_approval_rate + (t_critical*se))
 
 glimpse(approval_margins)
 
+
 #Create the graph
-approval_margins  %>%
-  ggplot(aes(x=week, y=net_approval_rate)) +
+approval_margins %>% 
+  #filter(subgroup == "Voters") %>%
+  ggplot(aes(x=week, y= mean_net_approval_rate)) +
   
   #Set colors 
-  geom_point(color="chocolate2", size=1) +
-  geom_line(color="chocolate2")+
+  geom_point(color="chocolate2", size=1.5) +
+  geom_line(color="chocolate2") +
   
   #Add fill between lines
-  geom_ribbon(aes(ymin=lower, ymax=upper),
+  geom_ribbon(aes(ymin=lower_ci, ymax=upper_ci),
               color="chocolate2", 
               fill="grey87", 
               linetype=1, 
               alpha=0.5, 
               size=0.3) +
   
+  facet_wrap(~subgroup) +
+  
   #Change limits, theme, scale, facet wrap and add fitted line 
   ylim(c(-15,50)) +
   theme_bw() +
   scale_x_continuous(breaks=seq(0, 35, 13))+
   scale_y_continuous(breaks=seq(-15, 10, 2.5))+
-  facet_wrap(~subgroup)+
   geom_smooth(se=FALSE) +
   
   #Add horizontal line 
   geom_hline(yintercept=0, 
              linetype="solid",
              color = "chocolate2", 
-             size=1) +
+             size=2) +
   
   #Add labels 
-  labs( caption= "Source: fivethirtyeight.com ",
-        title= "Estimating Approval Margins (approve-disapprove) for Joe Biden",
+  labs( title="Estimating Approval Margins (approve-disapprove) for Joe Biden",
         subtitle = "Weekly average of all polls",
         x = "Week of the year",
-        y = "Average Approval Margin (approve-disapprove") +
+        y = "Average Approval Margin (Approve - Disapprove)") +
   NULL
-    
 ```
 
 ## Analysis 

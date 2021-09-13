@@ -16,5 +16,294 @@ title: Political affiliation and Brexit voting
 
 <div id="analysis-of-brexit-voting-results-broked-down-by-political-affiliation" class="section level2">
 <h2>Analysis of Brexit voting results broked down by political affiliation</h2>
-<p>test</p>
+<p>Using data manipulation and visualization skills, we use the Brexit results data frame and produce a plot. With this graph we can analysis the relationship between political affiliation than tendency of voting in favor of leaving the EU.</p>
+<p>The data comes from <a href="https://www.thecrosstab.com/">Elliott Morris</a>, who cleaned it and made it available through his <a href="https://www.datacamp.com/courses/analyzing-election-and-polling-data-in-r">DataCamp class on analysing election and polling data in R</a>.</p>
+<p>The main outcome variable (or y) is <code>leave_share</code>, which is the percent of votes cast in favour of Brexit, or leaving the EU. Each row is a UK <a href="https://en.wikipedia.org/wiki/United_Kingdom_Parliament_constituencies">parliament constituency</a>.</p>
+</div>
+<div id="load-the-data-and-skim-it" class="section level1">
+<h1>Load the data and skim it</h1>
+<pre class="r"><code># Load data
+brexit &lt;- read_csv(here::here(&quot;data&quot;, &quot;brexit_results.csv&quot;))</code></pre>
+<pre><code>## Rows: 632 Columns: 11</code></pre>
+<pre><code>## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## chr  (1): Seat
+## dbl (10): con_2015, lab_2015, ld_2015, ukip_2015, leave_share, born_in_uk, m...</code></pre>
+<pre><code>## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<pre class="r"><code># Inspect data
+glimpse(brexit)</code></pre>
+<pre><code>## Rows: 632
+## Columns: 11
+## $ Seat        &lt;chr&gt; &quot;Aldershot&quot;, &quot;Aldridge-Brownhills&quot;, &quot;Altrincham and Sale W…
+## $ con_2015    &lt;dbl&gt; 50.592, 52.050, 52.994, 43.979, 60.788, 22.418, 52.454, 22…
+## $ lab_2015    &lt;dbl&gt; 18.333, 22.369, 26.686, 34.781, 11.197, 41.022, 18.441, 49…
+## $ ld_2015     &lt;dbl&gt; 8.824, 3.367, 8.383, 2.975, 7.192, 14.828, 5.984, 2.423, 1…
+## $ ukip_2015   &lt;dbl&gt; 17.867, 19.624, 8.011, 15.887, 14.438, 21.409, 18.821, 21.…
+## $ leave_share &lt;dbl&gt; 57.89777, 67.79635, 38.58780, 65.29912, 49.70111, 70.47289…
+## $ born_in_uk  &lt;dbl&gt; 83.10464, 96.12207, 90.48566, 97.30437, 93.33793, 96.96214…
+## $ male        &lt;dbl&gt; 49.89896, 48.92951, 48.90621, 49.21657, 48.00189, 49.17185…
+## $ unemployed  &lt;dbl&gt; 3.637000, 4.553607, 3.039963, 4.261173, 2.468100, 4.742731…
+## $ degree      &lt;dbl&gt; 13.870661, 9.974114, 28.600135, 9.336294, 18.775591, 6.085…
+## $ age_18to24  &lt;dbl&gt; 9.406093, 7.325850, 6.437453, 7.747801, 5.734730, 8.209863…</code></pre>
+<pre class="r"><code>skim(brexit)</code></pre>
+<table>
+<caption>(#tab:brexit graph)Data summary</caption>
+<tbody>
+<tr class="odd">
+<td align="left">Name</td>
+<td align="left">brexit</td>
+</tr>
+<tr class="even">
+<td align="left">Number of rows</td>
+<td align="left">632</td>
+</tr>
+<tr class="odd">
+<td align="left">Number of columns</td>
+<td align="left">11</td>
+</tr>
+<tr class="even">
+<td align="left">_______________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Column type frequency:</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">character</td>
+<td align="left">1</td>
+</tr>
+<tr class="odd">
+<td align="left">numeric</td>
+<td align="left">10</td>
+</tr>
+<tr class="even">
+<td align="left">________________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Group variables</td>
+<td align="left">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">min</th>
+<th align="right">max</th>
+<th align="right">empty</th>
+<th align="right">n_unique</th>
+<th align="right">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Seat</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">4</td>
+<td align="right">43</td>
+<td align="right">0</td>
+<td align="right">632</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">mean</th>
+<th align="right">sd</th>
+<th align="right">p0</th>
+<th align="right">p25</th>
+<th align="right">p50</th>
+<th align="right">p75</th>
+<th align="right">p100</th>
+<th align="left">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">con_2015</td>
+<td align="right">0</td>
+<td align="right">1.00</td>
+<td align="right">36.60</td>
+<td align="right">16.22</td>
+<td align="right">0.00</td>
+<td align="right">22.09</td>
+<td align="right">40.85</td>
+<td align="right">50.84</td>
+<td align="right">65.88</td>
+<td align="left">▂▅▃▇▅</td>
+</tr>
+<tr class="even">
+<td align="left">lab_2015</td>
+<td align="right">0</td>
+<td align="right">1.00</td>
+<td align="right">32.30</td>
+<td align="right">16.54</td>
+<td align="right">0.00</td>
+<td align="right">17.67</td>
+<td align="right">31.20</td>
+<td align="right">44.37</td>
+<td align="right">81.30</td>
+<td align="left">▆▇▇▅▁</td>
+</tr>
+<tr class="odd">
+<td align="left">ld_2015</td>
+<td align="right">0</td>
+<td align="right">1.00</td>
+<td align="right">7.81</td>
+<td align="right">8.36</td>
+<td align="right">0.00</td>
+<td align="right">2.97</td>
+<td align="right">4.58</td>
+<td align="right">8.57</td>
+<td align="right">51.49</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">ukip_2015</td>
+<td align="right">0</td>
+<td align="right">1.00</td>
+<td align="right">13.10</td>
+<td align="right">6.47</td>
+<td align="right">0.00</td>
+<td align="right">9.19</td>
+<td align="right">13.73</td>
+<td align="right">17.11</td>
+<td align="right">44.43</td>
+<td align="left">▃▇▃▁▁</td>
+</tr>
+<tr class="odd">
+<td align="left">leave_share</td>
+<td align="right">0</td>
+<td align="right">1.00</td>
+<td align="right">52.06</td>
+<td align="right">11.44</td>
+<td align="right">20.48</td>
+<td align="right">45.33</td>
+<td align="right">53.69</td>
+<td align="right">60.15</td>
+<td align="right">75.65</td>
+<td align="left">▂▂▆▇▂</td>
+</tr>
+<tr class="even">
+<td align="left">born_in_uk</td>
+<td align="right">0</td>
+<td align="right">1.00</td>
+<td align="right">88.15</td>
+<td align="right">11.29</td>
+<td align="right">40.73</td>
+<td align="right">86.42</td>
+<td align="right">92.48</td>
+<td align="right">95.42</td>
+<td align="right">98.02</td>
+<td align="left">▁▁▁▂▇</td>
+</tr>
+<tr class="odd">
+<td align="left">male</td>
+<td align="right">0</td>
+<td align="right">1.00</td>
+<td align="right">49.07</td>
+<td align="right">0.80</td>
+<td align="right">46.86</td>
+<td align="right">48.61</td>
+<td align="right">49.02</td>
+<td align="right">49.43</td>
+<td align="right">53.05</td>
+<td align="left">▁▇▃▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">unemployed</td>
+<td align="right">0</td>
+<td align="right">1.00</td>
+<td align="right">4.37</td>
+<td align="right">1.42</td>
+<td align="right">1.84</td>
+<td align="right">3.23</td>
+<td align="right">4.19</td>
+<td align="right">5.21</td>
+<td align="right">9.53</td>
+<td align="left">▆▇▅▂▁</td>
+</tr>
+<tr class="odd">
+<td align="left">degree</td>
+<td align="right">59</td>
+<td align="right">0.91</td>
+<td align="right">16.71</td>
+<td align="right">8.36</td>
+<td align="right">5.10</td>
+<td align="right">10.79</td>
+<td align="right">14.69</td>
+<td align="right">19.59</td>
+<td align="right">51.10</td>
+<td align="left">▇▆▂▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">age_18to24</td>
+<td align="right">0</td>
+<td align="right">1.00</td>
+<td align="right">9.29</td>
+<td align="right">3.59</td>
+<td align="right">5.73</td>
+<td align="right">7.30</td>
+<td align="right">8.28</td>
+<td align="right">9.60</td>
+<td align="right">32.68</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="crete-long-format-of-data-and-plot" class="section level1">
+<h1>Crete long format of data and plot</h1>
+<pre class="r"><code># Change to long format
+brexit_long &lt;- brexit %&gt;%  
+  pivot_longer(cols=c(&#39;con_2015&#39;, &#39;lab_2015&#39;, &#39;ld_2015&#39;, &#39;ukip_2015&#39;), names_to= &quot;Party&quot;, 
+               values_to=&quot;Party_share&quot;) 
+  
+# Plot graphs group/colour based on party   
+ggplot(data=brexit_long, aes(x=Party_share, y=leave_share, group=Party, colour=Party)) +
+
+  # Set colour
+  scale_color_manual(values = c(&quot;#0087dc&quot;, &quot;#d50000&quot;, &quot;#FDBB30&quot;, &quot;#EFE600&quot;), 
+                     breaks = c(&#39;con_2015&#39;, &#39;lab_2015&#39;, &#39;ld_2015&#39;, &#39;ukip_2015&#39;),
+                     labels = c(&quot;Conservative&quot;, &quot;Labour&quot;, &quot;Lib Dems&quot;, &quot;UKIP&quot;))+
+ 
+  # Set transparency, smooth line, themes, and x/y axis 
+  geom_point(alpha=0.4) +
+  geom_smooth(method=lm)+
+  theme_minimal() + 
+  ylim(c(20,100))+
+  xlim(c(0,90))+
+  scale_x_continuous(breaks=c(0,20,40,60,80))+
+  
+  #Adjust legend and build border 
+  theme(legend.position=&quot;bottom&quot;, 
+        legend.title = element_blank(),
+        panel.border = element_rect(color = &quot;black&quot;,
+                                    fill = NA,
+                                    size = 1))+
+  # Change labeling of graph
+  labs(
+    title = &quot;How political affiliation translated to Brexit Voting&quot;,
+    x = &quot;Party % in the UK 2015 general election&quot;,
+    y = &quot;Leave % in the 2016 Brexit referendum&quot;, 
+    cex=0.1)</code></pre>
+<pre><code>## Scale for &#39;x&#39; is already present. Adding another scale for &#39;x&#39;, which will
+## replace the existing scale.</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="/blogs/Brexit_election_files/figure-html/brexit%20graph%202-1.png" width="960" /></p>
 </div>

@@ -11,5 +11,73 @@ slug: brexit_and_political_party
 title: Political affiliation and Brexit voting 
 ---
 
+```{r load-libraries, warning=FALSE, message=FALSE, echo=FALSE}
+library(tidyverse)  # Load ggplot2, dplyr, and all the other tidyverse packages
+library(mosaic)
+library(ggthemes)
+library(GGally)
+library(readxl)
+library(here)
+library(skimr)
+library(janitor)
+library(broom)
+library(tidyquant)
+library(infer)
+library(openintro)
+```
 ## Analysis of Brexit voting results broked down by political affiliation 
-test
+
+Using data manipulation and visualization skills, we use the Brexit results data frame and produce a plot. With this graph we can analysis the relationship between political affiliation than tendency of voting in favor of leaving the EU. 
+
+The data comes from [Elliott Morris](https://www.thecrosstab.com/), who cleaned it and made it available through his [DataCamp class on analysing election and polling data in R](https://www.datacamp.com/courses/analyzing-election-and-polling-data-in-r).
+
+The main outcome variable (or y) is `leave_share`, which is the percent of votes cast in favour of Brexit, or leaving the EU. Each row is a UK [parliament constituency](https://en.wikipedia.org/wiki/United_Kingdom_Parliament_constituencies).
+
+# Load the data and skim it 
+```{r brexit graph, fig.width=10, fig.height=6}
+# Load data
+brexit <- read_csv(here::here("data", "brexit_results.csv"))
+
+# Inspect data
+glimpse(brexit)
+skim(brexit)
+```
+
+# Crete long format of data and plot 
+```{r brexit graph 2, fig.width=10, fig.height=6}
+
+# Change to long format
+brexit_long <- brexit %>%  
+  pivot_longer(cols=c('con_2015', 'lab_2015', 'ld_2015', 'ukip_2015'), names_to= "Party", 
+               values_to="Party_share") 
+  
+# Plot graphs group/colour based on party   
+ggplot(data=brexit_long, aes(x=Party_share, y=leave_share, group=Party, colour=Party)) +
+
+  # Set colour
+  scale_color_manual(values = c("#0087dc", "#d50000", "#FDBB30", "#EFE600"), 
+                     breaks = c('con_2015', 'lab_2015', 'ld_2015', 'ukip_2015'),
+                     labels = c("Conservative", "Labour", "Lib Dems", "UKIP"))+
+ 
+  # Set transparency, smooth line, themes, and x/y axis 
+  geom_point(alpha=0.4) +
+  geom_smooth(method=lm)+
+  theme_minimal() + 
+  ylim(c(20,100))+
+  xlim(c(0,90))+
+  scale_x_continuous(breaks=c(0,20,40,60,80))+
+  
+  #Adjust legend and build border 
+  theme(legend.position="bottom", 
+        legend.title = element_blank(),
+        panel.border = element_rect(color = "black",
+                                    fill = NA,
+                                    size = 1))+
+  # Change labeling of graph
+  labs(
+    title = "How political affiliation translated to Brexit Voting",
+    x = "Party % in the UK 2015 general election",
+    y = "Leave % in the 2016 Brexit referendum", 
+    cex=0.1)
+  
+```

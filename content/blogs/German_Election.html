@@ -3,7 +3,7 @@ categories:
 - ""
 - ""
 date: "2017-10-31T22:42:51-05:00"
-description: German election 2021 forecasts up until 10.September 2021.
+description: German election 2021 forecasts up until 10. September 2021.
 draft: false
 image: Germany_2.jpg
 keywords: ""
@@ -16,10 +16,10 @@ title: Germany election 2021 forecast
 
 <div id="calculate-2-week-moving-average-of-opinion-polls-for-the-2021-german-elections" class="section level1">
 <h1>Calculate 2-week moving average of opinion polls for the 2021 German elections</h1>
-<p>The Guardian newspaper has an <a href="https://www.theguardian.com/world/2021/aug/20/german-election-poll-tracker-who-will-be-the-next-chancellor">election poll tracker for the upcoming German election</a>. The list of the opinion polls since Jan 2021 can be found at <a href="https://en.wikipedia.org/wiki/Opinion_polling_for_the_2021_German_federal_election">Wikipedia</a>. Here I will reproduce the graph with the following code. This is the picture from <a href="https://www.theguardian.com/world/2021/aug/20/german-election-poll-tracker-who-will-be-the-next-chancellor">The Guardian</a> that is replicated with the code. However, we choose to only plot the values for 2021.</p>
+<p>The Guardian newspaper has an <a href="https://www.theguardian.com/world/2021/aug/20/german-election-poll-tracker-who-will-be-the-next-chancellor">election poll tracker for the upcoming German election</a>. The list of the opinion polls since Jan 2021 can be found at <a href="https://en.wikipedia.org/wiki/Opinion_polling_for_the_2021_German_federal_election">Wikipedia</a>. Here we will reproduce the graph with the following code. As a referejce, please see the picture from <a href="https://www.theguardian.com/world/2021/aug/20/german-election-poll-tracker-who-will-be-the-next-chancellor">The Guardian</a> below that is replicated with the code. However, we choose to only plot the values for 2021. Essentially, we look at all voting polls from 2021 and calculate a 14-day moving average which we then plot. We do this to see the changes in voting forecasts leading up to the german federal election in September 2021.</p>
 <p>Graph we will replicate:</p>
 <p><img src="/img/german_election.png" width="70%" style="display: block; margin: auto;" /></p>
-<p>Code:</p>
+<p>First we load the data and adjust the date type to lubridate so that we can work with it.</p>
 <pre class="r"><code>url &lt;- &quot;https://en.wikipedia.org/wiki/Opinion_polling_for_the_2021_German_federal_election&quot;
 
 # get tables that exist on wikipedia page 
@@ -36,9 +36,13 @@ polls &lt;- map(tables, . %&gt;%
 
 
 # list of opinion polls
-german_election_polls &lt;- polls[[1]] %&gt;% # the first table on the page contains the list of all opinions polls
-  slice(2:(n()-1)) %&gt;%  # drop the first row, as it contains again the variable names and last row that contains 2017 results
+# the first table on the page contains the list of all opinions polls
+german_election_polls &lt;- polls[[1]] %&gt;% 
+  
+  # drop the first row, as it contains again the variable names and last row that contains 2017 results
+  slice(2:(n()-1)) %&gt;%  
   mutate(
+    
          # polls are shown to run from-to, e.g. 9-13 Aug 2021. We keep the last date, 13 Aug here, as the poll date
          # and we extract it by picking the last 11 characters from that field
          end_date = str_sub(fieldwork_date, -11),
@@ -49,6 +53,7 @@ german_election_polls &lt;- polls[[1]] %&gt;% # the first table on the page cont
          # we also get the month and week number from the date, if we want to do analysis by month- week, etc.
          month = month(end_date),
          week = isoweek(end_date))</code></pre>
+<p>Then we create a dataframe with the columns of data we are actually interested in for the analysis. In addition we mutate the dataframe so that all infromation we need to create the graph is created. In specific, we calculate the 14-day moving average poll prediction for the individual parties.</p>
 <pre class="r"><code>german_polls &lt;- german_election_polls %&gt;% 
   
   #Select parties data we need 
@@ -80,24 +85,31 @@ german_election_polls &lt;- polls[[1]] %&gt;% # the first table on the page cont
          grunem = (movavg(grune_votes, 14, &quot;s&quot;)/samplesizem*100),
          )
 
-german_polls</code></pre>
-<pre><code>## # A tibble: 226 × 22
-##    polling_firm        end_date   samplesize union   spd  af_d   fdp linke grune
-##    &lt;chr&gt;               &lt;date&gt;          &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-##  1 INSA                2021-09-10       1152  20      26    11  13     6    15  
-##  2 Forschungsgruppe W… 2021-09-09       1281  22      25    11  11     6    17  
-##  3 Kantar              2021-09-09       1901  21      25    12  12     6    17  
-##  4 Wahlkreisprognose   2021-09-08       1208  19      28    11  12     6    14  
-##  5 Civey               2021-09-08      10082  23      25    11  11     6    17  
-##  6 YouGov              2021-09-07       1700  21      26    12  10     6    15  
-##  7 Allensbach          2021-09-07       1258  25      27    11   9.5   6    15.5
-##  8 INSA                2021-09-06       2052  20.5    26    11  12.5   6.5  15.5
-##  9 GMS                 2021-09-06       1004  23      25    11  12     6    17  
-## 10 Forsa               2021-09-06       2505  19      25    11  13     6    17  
-## # … with 216 more rows, and 13 more variables: union_votes &lt;dbl&gt;,
-## #   spd_votes &lt;dbl&gt;, af_d_votes &lt;dbl&gt;, fdp_votes &lt;dbl&gt;, linke_votes &lt;dbl&gt;,
-## #   grune_votes &lt;dbl&gt;, samplesizem &lt;dbl&gt;, unionm &lt;dbl&gt;, spdm &lt;dbl&gt;,
-## #   af_dm &lt;dbl&gt;, fdpm &lt;dbl&gt;, linkem &lt;dbl&gt;, grunem &lt;dbl&gt;</code></pre>
+glimpse(german_polls)</code></pre>
+<pre><code>## Rows: 226
+## Columns: 22
+## $ polling_firm &lt;chr&gt; &quot;INSA&quot;, &quot;Forschungsgruppe Wahlen&quot;, &quot;Kantar&quot;, &quot;Wahlkreispr…
+## $ end_date     &lt;date&gt; 2021-09-10, 2021-09-09, 2021-09-09, 2021-09-08, 2021-09-…
+## $ samplesize   &lt;dbl&gt; 1152, 1281, 1901, 1208, 10082, 1700, 1258, 2052, 1004, 25…
+## $ union        &lt;dbl&gt; 20.0, 22.0, 21.0, 19.0, 23.0, 21.0, 25.0, 20.5, 23.0, 19.…
+## $ spd          &lt;dbl&gt; 26, 25, 25, 28, 25, 26, 27, 26, 25, 25, 25, 25, 26, 25, 2…
+## $ af_d         &lt;dbl&gt; 11.0, 11.0, 12.0, 11.0, 11.0, 12.0, 11.0, 11.0, 11.0, 11.…
+## $ fdp          &lt;dbl&gt; 13.0, 11.0, 12.0, 12.0, 11.0, 10.0, 9.5, 12.5, 12.0, 13.0…
+## $ linke        &lt;dbl&gt; 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.5, 6.0, 6.0, 7.0, 7.…
+## $ grune        &lt;dbl&gt; 15.0, 17.0, 17.0, 14.0, 17.0, 15.0, 15.5, 15.5, 17.0, 17.…
+## $ union_votes  &lt;dbl&gt; 230, 282, 399, 230, 2319, 357, 314, 421, 231, 476, 285, 2…
+## $ spd_votes    &lt;dbl&gt; 300, 320, 475, 338, 2520, 442, 340, 534, 251, 626, 357, 3…
+## $ af_d_votes   &lt;dbl&gt; 127, 141, 228, 133, 1109, 204, 138, 226, 110, 276, 171, 1…
+## $ fdp_votes    &lt;dbl&gt; 150, 141, 228, 145, 1109, 170, 120, 256, 120, 326, 186, 1…
+## $ linke_votes  &lt;dbl&gt; 69.1, 76.9, 114.1, 72.5, 604.9, 102.0, 75.5, 133.4, 60.2,…
+## $ grune_votes  &lt;dbl&gt; 173, 218, 323, 169, 1714, 255, 195, 318, 171, 426, 228, 2…
+## $ samplesizem  &lt;dbl&gt; 1152, 1216, 1445, 1386, 3125, 2887, 2655, 2579, 2404, 241…
+## $ unionm       &lt;dbl&gt; 20.0, 21.1, 21.0, 20.6, 22.1, 22.0, 22.2, 22.1, 22.1, 21.…
+## $ spdm         &lt;dbl&gt; 26.0, 25.5, 25.3, 25.9, 25.3, 25.4, 25.5, 25.5, 25.5, 25.…
+## $ af_dm        &lt;dbl&gt; 11.0, 11.0, 11.4, 11.3, 11.1, 11.2, 11.2, 11.2, 11.2, 11.…
+## $ fdpm         &lt;dbl&gt; 13.0, 11.9, 12.0, 12.0, 11.3, 11.2, 11.1, 11.2, 11.3, 11.…
+## $ linkem       &lt;dbl&gt; 6.00, 6.00, 6.00, 6.00, 6.00, 6.00, 6.00, 6.05, 6.05, 6.0…
+## $ grunem       &lt;dbl&gt; 15.0, 16.1, 16.5, 15.9, 16.6, 16.5, 16.4, 16.3, 16.3, 16.…</code></pre>
 <pre class="r"><code>#create legend numbers following each party
 union_rate &lt;- german_polls %&gt;% filter(end_date == end_date[length(end_date)]) %&gt;% select(union)
 spd_rate &lt;- german_polls %&gt;% filter(end_date == end_date[length(end_date)]) %&gt;% select(spd)
@@ -113,6 +125,7 @@ af_d_rate &lt;- paste(&quot;AfD      &quot;, af_d_rate[1,1])
 fdp_rate &lt;- paste(&quot;FDP    &quot;, fdp_rate[1,1])
 linke_rate &lt;- paste(&quot;Linke   &quot;, linke_rate[1,1])
 grune_rate &lt;- paste(&quot;Grune   &quot;, grune_rate[1,1])</code></pre>
+<p>Finally, we actually plot the graph using the mutated data frame from before. We ensure that the lines have the correct color depending on the party, adjust the axis and label the graph.</p>
 <pre class="r"><code>#Create the table 
 german_polls %&gt;% 
   select(end_date, union, spd, af_d, fdp, linke, grune, unionm, spdm, af_dm, fdpm, linkem, grunem) %&gt;% 
@@ -174,5 +187,5 @@ german_polls %&gt;%
   x = &quot;&quot;,
   y = &quot;&quot;) + 
   NULL</code></pre>
-<p><img src="/blogs/German_Election_files/figure-html/create%20table%20german%20polls,%20-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<p><img src="/blogs/German_Election_files/figure-html/create%20Pgrah%20german%20polls,%20-1.png" width="80%" style="display: block; margin: auto;" /></p>
 </div>

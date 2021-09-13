@@ -3,7 +3,7 @@ categories:
 - ""
 - ""
 date: "2017-10-31T22:42:51-05:00"
-description: German election 2021 forecasts up until 10.September 2021.
+description: German election 2021 forecasts up until 10. September 2021.
 draft: false
 image: Germany_2.jpg
 keywords: ""
@@ -47,7 +47,7 @@ library(pracma)
 
 # Calculate 2-week moving average of opinion polls for the 2021 German elections
 
-The Guardian newspaper has an [election poll tracker for the upcoming German election](https://www.theguardian.com/world/2021/aug/20/german-election-poll-tracker-who-will-be-the-next-chancellor). The list of the opinion polls since Jan 2021 can be found at [Wikipedia](https://en.wikipedia.org/wiki/Opinion_polling_for_the_2021_German_federal_election). Here I will reproduce the graph with the following code. This is the picture from [The Guardian](https://www.theguardian.com/world/2021/aug/20/german-election-poll-tracker-who-will-be-the-next-chancellor) that is replicated with the code. However, we choose to only plot the values for 2021. 
+The Guardian newspaper has an [election poll tracker for the upcoming German election](https://www.theguardian.com/world/2021/aug/20/german-election-poll-tracker-who-will-be-the-next-chancellor). The list of the opinion polls since Jan 2021 can be found at [Wikipedia](https://en.wikipedia.org/wiki/Opinion_polling_for_the_2021_German_federal_election). Here we will reproduce the graph with the following code. As a referejce, please see the picture from [The Guardian](https://www.theguardian.com/world/2021/aug/20/german-election-poll-tracker-who-will-be-the-next-chancellor) below that is replicated with the code. However, we choose to only plot the values for 2021. Essentially, we look at all voting polls from 2021 and calculate a 14-day moving average which we then plot. We do this to see the changes in voting forecasts leading up to the german federal election in September 2021. 
 
 Graph we will replicate: 
 
@@ -55,7 +55,7 @@ Graph we will replicate:
 knitr::include_graphics("/img/german_election.png", error = FALSE)
 ```
 
-Code: 
+First we load the data and adjust the date type to lubridate so that we can work with it.  
 ```{r, scrape_wikipedia_polling_data, warnings= FALSE, message=FALSE}
 
 url <- "https://en.wikipedia.org/wiki/Opinion_polling_for_the_2021_German_federal_election"
@@ -74,9 +74,13 @@ polls <- map(tables, . %>%
 
 
 # list of opinion polls
-german_election_polls <- polls[[1]] %>% # the first table on the page contains the list of all opinions polls
-  slice(2:(n()-1)) %>%  # drop the first row, as it contains again the variable names and last row that contains 2017 results
+# the first table on the page contains the list of all opinions polls
+german_election_polls <- polls[[1]] %>% 
+  
+  # drop the first row, as it contains again the variable names and last row that contains 2017 results
+  slice(2:(n()-1)) %>%  
   mutate(
+    
          # polls are shown to run from-to, e.g. 9-13 Aug 2021. We keep the last date, 13 Aug here, as the poll date
          # and we extract it by picking the last 11 characters from that field
          end_date = str_sub(fieldwork_date, -11),
@@ -88,6 +92,8 @@ german_election_polls <- polls[[1]] %>% # the first table on the page contains t
          month = month(end_date),
          week = isoweek(end_date))
 ```
+
+Then we create a dataframe with the columns of data we are actually interested in for the analysis. In addition we mutate the dataframe so that all infromation we need to create the graph is created. In specific, we calculate the 14-day moving average poll prediction for the individual parties. 
 
 ```{r create table}
 german_polls <- german_election_polls %>% 
@@ -121,7 +127,7 @@ german_polls <- german_election_polls %>%
          grunem = (movavg(grune_votes, 14, "s")/samplesizem*100),
          )
 
-german_polls
+glimpse(german_polls)
 ```
 
 ```{r create the legend for each party}
@@ -143,7 +149,9 @@ linke_rate <- paste("Linke   ", linke_rate[1,1])
 grune_rate <- paste("Grune   ", grune_rate[1,1])
 ```
 
-```{r create table german polls, , out.width = '80%', fig.width=8, fig.height=6}
+Finally, we actually plot the graph using the mutated data frame from before. We ensure that the lines have the correct color depending on the party, adjust the axis and label the graph.
+
+```{r create Pgrah german polls, , out.width = '80%', fig.width=8, fig.height=6}
 
 #Create the table 
 german_polls %>% 

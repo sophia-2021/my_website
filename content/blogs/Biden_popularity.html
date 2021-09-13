@@ -16,9 +16,10 @@ title: Popularity of President Biden over time
 
 <div id="analysis-of-president-bidens-popularity-over-time" class="section level1">
 <h1>Analysis of President Biden’s popularity over time</h1>
-<p>In this section, we will visualize President Biden’s approval rate since his first day in office at the beginning of 2021. We will load the data from fivethirtyeight.com as it has detailed data on <a href="https://projects.fivethirtyeight.com/biden-approval-ratings">all polls that track the president’s approval</a></p>
+<p>In this section, we will visualize President Biden’s approval rate since his first day in office at the beginning of 2021. We do this to analysis how his popularity has changed over time of his inaguration. We will load the data from <a href="https://projects.fivethirtyeight.com/biden-approval-ratings">fivethirtyeight.com</a> as it has detailed data on all polls that track the president’s approval.</p>
 <div id="load-the-data" class="section level2">
 <h2>Load the data</h2>
+<p>Fist we load the data and change the date type to lubridate.</p>
 <pre class="r"><code># Import approval polls data directly off fivethirtyeight website
 approval_pollist &lt;- read_csv(&#39;https://projects.fivethirtyeight.com/biden-approval-data/approval_polllist.csv&#39;) </code></pre>
 <pre><code>## Rows: 1597 Columns: 22</code></pre>
@@ -70,7 +71,8 @@ approval_margins &lt;- approval_pollist %&gt;%
   
   #Select enddate
   filter(!is.na(enddate)) %&gt;%
-  mutate(week=isoweek(enddate)) %&gt;%
+  mutate(week=isoweek(enddate),
+         net_approval_rate = adjusted_approve-adjusted_disapprove) %&gt;% 
   
   #Group the data
   group_by(week, subgroup) %&gt;%
@@ -78,64 +80,63 @@ approval_margins &lt;- approval_pollist %&gt;%
   #Summarize data (use se formula for differences)
   summarise(
     number = n(),
-    net_approval_rate = mean(adjusted_approve)-mean(adjusted_disapprove),
-    sd_approve = sd(adjusted_approve),
-    sd_disapprove = sd(adjusted_disapprove),
-    se = sqrt((sd_approve)**2/number+((sd_disapprove)**2/number)),
-    t_critical=qt(0.975, number- 1 ),
-            lower = net_approval_rate- (t_critical*se),
-            upper = net_approval_rate+ (t_critical*se))</code></pre>
+    mean_net_approval_rate = mean(net_approval_rate, na.rm=TRUE),
+    sd_net = sd(net_approval_rate, na.rm=TRUE),
+    se = sd_net/sqrt(number),
+    t_critical=qt(0.975, number- 1),
+            lower_ci = mean_net_approval_rate - (t_critical*se),
+            upper_ci = mean_net_approval_rate + (t_critical*se))</code></pre>
 <pre><code>## `summarise()` has grouped output by &#39;week&#39;. You can override using the `.groups` argument.</code></pre>
 <pre class="r"><code>glimpse(approval_margins)</code></pre>
 <pre><code>## Rows: 99
-## Columns: 10
+## Columns: 9
 ## Groups: week [33]
-## $ week              &lt;dbl&gt; 4, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7, 8, 8, 8, 9, 9, 9…
-## $ subgroup          &lt;chr&gt; &quot;Adults&quot;, &quot;All polls&quot;, &quot;Voters&quot;, &quot;Adults&quot;, &quot;All poll…
-## $ number            &lt;int&gt; 9, 16, 9, 14, 23, 12, 12, 19, 9, 13, 25, 14, 13, 26,…
-## $ net_approval_rate &lt;dbl&gt; 19.17343, 16.30575, 14.95819, 17.16960, 15.90139, 15…
-## $ sd_approve        &lt;dbl&gt; 1.752640, 2.138042, 2.680897, 2.602285, 2.676196, 2.…
-## $ sd_disapprove     &lt;dbl&gt; 1.002730, 2.692060, 3.389945, 1.119173, 2.039548, 2.…
-## $ se                &lt;dbl&gt; 0.6730704, 0.8594479, 1.4406380, 0.7570826, 0.701606…
-## $ t_critical        &lt;dbl&gt; 2.306004, 2.131450, 2.306004, 2.160369, 2.073873, 2.…
-## $ lower             &lt;dbl&gt; 17.621326, 14.473882, 11.636071, 15.534025, 14.44635…
-## $ upper             &lt;dbl&gt; 20.72553, 18.13762, 18.28031, 18.80518, 17.35644, 17…</code></pre>
+## $ week                   &lt;dbl&gt; 4, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7, 8, 8, 8, 9,…
+## $ subgroup               &lt;chr&gt; &quot;Adults&quot;, &quot;All polls&quot;, &quot;Voters&quot;, &quot;Adults&quot;, &quot;All…
+## $ number                 &lt;int&gt; 9, 16, 9, 14, 23, 12, 12, 19, 9, 13, 25, 14, 13…
+## $ mean_net_approval_rate &lt;dbl&gt; 19.17343, 16.30575, 14.95819, 17.16960, 15.9013…
+## $ sd_net                 &lt;dbl&gt; 1.806431, 3.805121, 5.283957, 3.140905, 3.88976…
+## $ se                     &lt;dbl&gt; 0.6021437, 0.9512803, 1.7613191, 0.8394422, 0.8…
+## $ t_critical             &lt;dbl&gt; 2.306004, 2.131450, 2.306004, 2.160369, 2.07387…
+## $ lower_ci               &lt;dbl&gt; 17.784883, 14.278146, 10.896579, 15.356098, 14.…
+## $ upper_ci               &lt;dbl&gt; 20.56198, 18.33336, 19.01980, 18.98311, 17.5834…</code></pre>
 <pre class="r"><code>#Create the graph
-approval_margins  %&gt;%
-  ggplot(aes(x=week, y=net_approval_rate)) +
+approval_margins %&gt;% 
+  #filter(subgroup == &quot;Voters&quot;) %&gt;%
+  ggplot(aes(x=week, y= mean_net_approval_rate)) +
   
   #Set colors 
-  geom_point(color=&quot;chocolate2&quot;, size=1) +
-  geom_line(color=&quot;chocolate2&quot;)+
+  geom_point(color=&quot;chocolate2&quot;, size=1.5) +
+  geom_line(color=&quot;chocolate2&quot;) +
   
   #Add fill between lines
-  geom_ribbon(aes(ymin=lower, ymax=upper),
+  geom_ribbon(aes(ymin=lower_ci, ymax=upper_ci),
               color=&quot;chocolate2&quot;, 
               fill=&quot;grey87&quot;, 
               linetype=1, 
               alpha=0.5, 
               size=0.3) +
   
+  facet_wrap(~subgroup) +
+  
   #Change limits, theme, scale, facet wrap and add fitted line 
   ylim(c(-15,50)) +
   theme_bw() +
   scale_x_continuous(breaks=seq(0, 35, 13))+
   scale_y_continuous(breaks=seq(-15, 10, 2.5))+
-  facet_wrap(~subgroup)+
   geom_smooth(se=FALSE) +
   
   #Add horizontal line 
   geom_hline(yintercept=0, 
              linetype=&quot;solid&quot;,
              color = &quot;chocolate2&quot;, 
-             size=1) +
+             size=2) +
   
   #Add labels 
-  labs( caption= &quot;Source: fivethirtyeight.com &quot;,
-        title= &quot;Estimating Approval Margins (approve-disapprove) for Joe Biden&quot;,
+  labs( title=&quot;Estimating Approval Margins (approve-disapprove) for Joe Biden&quot;,
         subtitle = &quot;Weekly average of all polls&quot;,
         x = &quot;Week of the year&quot;,
-        y = &quot;Average Approval Margin (approve-disapprove&quot;) +
+        y = &quot;Average Approval Margin (Approve - Disapprove)&quot;) +
   NULL</code></pre>
 <pre><code>## Scale for &#39;y&#39; is already present. Adding another scale for &#39;y&#39;, which will
 ## replace the existing scale.</code></pre>
