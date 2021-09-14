@@ -55,6 +55,7 @@ Graph we will replicate:
 knitr::include_graphics("/img/german_election.png", error = FALSE)
 ```
 
+## Load the data 
 First we load the data and adjust the date type to lubridate so that we can work with it.  
 ```{r, scrape_wikipedia_polling_data, warnings= FALSE, message=FALSE}
 
@@ -93,6 +94,7 @@ german_election_polls <- polls[[1]] %>%
          week = isoweek(end_date))
 ```
 
+## Create and mutate the dataframe 
 Then we create a dataframe with the columns of data we are actually interested in for the analysis. In addition we mutate the dataframe so that all infromation we need to create the graph is created. In specific, we calculate the 14-day moving average poll prediction for the individual parties. 
 
 ```{r create table}
@@ -149,6 +151,7 @@ linke_rate <- paste("Linke   ", linke_rate[1,1])
 grune_rate <- paste("Grune   ", grune_rate[1,1])
 ```
 
+## Create the final graph 
 Finally, we actually plot the graph using the mutated data frame from before. We ensure that the lines have the correct color depending on the party, adjust the axis and label the graph.
 
 ```{r create Pgrah german polls, , out.width = '80%', fig.width=8, fig.height=6}
