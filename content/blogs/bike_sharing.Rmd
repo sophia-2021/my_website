@@ -181,5 +181,5 @@ ggplot(df1[1:292,], aes(week, change, group=1)) +
 
 ```
 
-##Observations
+##Observations 
 This graph makes it easy to see how much bike rentals fluctuate from the expected weekly over time. Especially year 2020 appears to deviate quite a lot from the average. In a few weeks, the bike rentals fell very short of what was expected. This time period from approximately calendar week 10 to 20 corresponds to the first lock down period of the Covid-19 pandemic. Given that most people stayed at home, it makes sense that people were reluctant to rent bikes. Then over the summer, as regulations loosened, many people were interested in spending time outside and a bike ride of course would be considered safer than taking the bus or the tube when looking at the risk of potential infections, so actual rentals actually exceeded expected rentals.   

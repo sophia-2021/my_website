@@ -220,4 +220,6 @@ german_polls %>%
   y = "") + 
   NULL
 ```
+
+##Observations
 We can see that at the beginning of 2021, the Union (also known as CDU), was by far the most popular party across the polls. However, with time, their poll rates decreased significantly. The SPD, led by Chancellor candidate Olaf Scholz, however, experienced an opposite trend. Especially from July to August, SPD gained significant share of the polls, which is an indication for popularity. Hence, as of the beginning of September, is not yet visible who will succeed Angela Merkel as the Chancellor of Germany. 
