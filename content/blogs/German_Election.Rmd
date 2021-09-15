@@ -47,7 +47,7 @@ library(pracma)
 
 # Calculate 2-week moving average of opinion polls for the 2021 German elections
 
-The Guardian newspaper has an [election poll tracker for the upcoming German election](https://www.theguardian.com/world/2021/aug/20/german-election-poll-tracker-who-will-be-the-next-chancellor). The list of the opinion polls since Jan 2021 can be found at [Wikipedia](https://en.wikipedia.org/wiki/Opinion_polling_for_the_2021_German_federal_election). Here we will reproduce the graph with the following code. As a referejce, please see the picture from [The Guardian](https://www.theguardian.com/world/2021/aug/20/german-election-poll-tracker-who-will-be-the-next-chancellor) below that is replicated with the code. However, we choose to only plot the values for 2021. Essentially, we look at all voting polls from 2021 and calculate a 14-day moving average which we then plot. We do this to see the changes in voting forecasts leading up to the german federal election in September 2021. 
+The Guardian newspaper has an [election poll tracker for the upcoming German election](https://www.theguardian.com/world/2021/aug/20/german-election-poll-tracker-who-will-be-the-next-chancellor). The list of the opinion polls since Jan 2021 can be found at [Wikipedia](https://en.wikipedia.org/wiki/Opinion_polling_for_the_2021_German_federal_election). Here we will reproduce the graph with the following code. As a reference, please see the picture from [The Guardian](https://www.theguardian.com/world/2021/aug/20/german-election-poll-tracker-who-will-be-the-next-chancellor) below that is replicated with the code. However, we choose to only plot the values for 2021. Essentially, we look at all voting polls from 2021 and calculate a 14-day moving average which we then plot. We do this to see the changes in voting forecasts leading up to the German federal election in September 2021. 
 
 Graph we will replicate: 
 
@@ -95,7 +95,7 @@ german_election_polls <- polls[[1]] %>%
 ```
 
 ## Create and mutate the dataframe 
-Then we create a dataframe with the columns of data we are actually interested in for the analysis. In addition we mutate the dataframe so that all infromation we need to create the graph is created. In specific, we calculate the 14-day moving average poll prediction for the individual parties. 
+Then we create a dataframe with the columns of data we are actually interested in for the analysis. In addition we mutate the dataframe so that all information we need to create the graph is available. For example, we take the sample size of every poll and multiply it with the voting fraction to get the total number of voters for a specific party by the respective poll. Then, in the next step, we can add up multiple polls by adding the voters across poll of a specific party and dividing it by total number of asked people for the sum of poll taken. This is important as we calculate the 14-day moving average poll prediction for the individual parties. We cannot simply average the percentages by parties reported by the dataset, but need to recaclulate given that the different polls had different sample sizes. 
 
 ```{r create table}
 german_polls <- german_election_polls %>% 
@@ -152,7 +152,9 @@ grune_rate <- paste("Grune   ", grune_rate[1,1])
 ```
 
 ## Create the final graph 
-Finally, we actually plot the graph using the mutated data frame from before. We ensure that the lines have the correct color depending on the party, adjust the axis and label the graph.
+Finally, we actually plot the graph using the mutated data frame from before. We want to plot the all poll individually with points. In addition, we add a line with the 14-day moving average across the different polls taken within that time period. The 14-day moving average essentially smoothens out some of the volatility and makes it easier to see trends across the different polls. 
+
+We also ensure that the lines and points have the correct color depending on the party, adjust the axis to make it visually more appealing and label the graph appropriately.
 
 ```{r create Pgrah german polls, , out.width = '80%', fig.width=8, fig.height=6}
 
@@ -218,3 +220,4 @@ german_polls %>%
   y = "") + 
   NULL
 ```
+We can see that at the beginning of 2021, the Union (also known as CDU), was by far the most popular party across the polls. However, with time, their poll rates decreased significantly. The SPD, led by Chancellor candidate Olaf Scholz, however, experienced an opposite trend. Especially from July to August, SPD gained significant share of the polls, which is an indication for popularity. Hence, as of the beginning of September, is not yet visible who will succeed Angela Merkel as the Chancellor of Germany. 

@@ -13,7 +13,7 @@ title: Popularity of President Biden over time
 
 # Analysis of President Biden's popularity over time 
 
-In this section, we will visualize President Biden's approval rate since his first day in office at the beginning of 2021. We do this to analysis how his popularity has changed over time of his inaguration. We will load the data from [fivethirtyeight.com](https://projects.fivethirtyeight.com/biden-approval-ratings) as it has detailed data on all polls that track the president's approval.
+In this section, we will visualize President Biden's approval rate since his first day in office at the beginning of 2021. We do this to analysis how his popularity has changed over time of his inauguration. We will load the data from [fivethirtyeight.com](https://projects.fivethirtyeight.com/biden-approval-ratings) as it has detailed data on all polls that track the president's approval.
 
 ```{r load-libraries, include=FALSE}
 library(tidyverse)  # Load ggplot2, dplyr, and all the other tidyverse packages
@@ -29,7 +29,7 @@ library(vroom)
 ```
 
 ## Load the data 
-Fist we load the data and change the date type to lubridate.
+Fist we load the data and change the date type to lubridate to facilitate working with the dates.
 ```{r, cache=TRUE}
 
 # Import approval polls data directly off fivethirtyeight website
@@ -45,9 +45,14 @@ approval_pollist <- approval_pollist %>%
           createddate = lubridate::mdy(createddate))
 ```
 
-## Create a plot
+## Create a new data frame 
 
-We calculate the average net approval rate (approve- disapprove) for each week since President Biden got into office. Then we plot the net approval, along with its 95% confidence interval. We use the 'enddate' as date and facet by the subgroup to see the difference between adults, voters and all polls. 
+We calculate the average net approval rate (approve - disapprove) for each week since President Biden got into office. Then we plot the net approval, along with its 95% confidence interval. We use the 'enddate' as date and facet by the subgroup to see the difference between adults, voters and all polls. 
+
+The net approval rate allows us to get a feeling of how popular Biden and his policy is within the US. For different polls, the percentage of people that state they *approve* and the percentage of people that *disapprove* for the given statements is calculated. We "net" these rates and then calculate the weekly mean across the pools taken within the respective week. In addition, we calculate a 95%  confidence interval for the net approval rate using the formula **CI: mean +/- (t-critical * SE)**.
+
+We use `glimpse()` to look at the new data frame we created.
+
 
 ```{r Bidens Approval Margins, fig.width=8, fig.height=6, fig.align= "center"}
 
@@ -73,11 +78,16 @@ approval_margins <- approval_pollist %>%
             upper_ci = mean_net_approval_rate + (t_critical*se))
 
 glimpse(approval_margins)
+```
 
+## Create the graph
 
+We essentially plot the mean net approval rate per week. We decide to filter the `subgroup=="Voters`. The single data points are plotted by points and connected with a line. In addition, we add a `geom_smooth()` line to show the trend. More over, we plot the confidence interval using the `geom_ribbon()` function and fill the area it in light grey to make if visually more appealing in the graph. With the help of `geom_hline()` we add a horizontal line at `x=0` which essentially shows the line at which approval rate would equal disapproval rate. 
+
+```{r Bidens Approval Margins Graph, fig.width=8, fig.height=6, fig.align= "center"}
 #Create the graph
 approval_margins %>% 
-  #filter(subgroup == "Voters") %>%
+  filter(subgroup == "Voters") %>%
   ggplot(aes(x=week, y= mean_net_approval_rate)) +
   
   #Set colors 
@@ -116,6 +126,6 @@ approval_margins %>%
 ```
 
 ## Analysis 
-Looking at the confidence interval, we can see that its size greatly differ between week 4 and week 25. One of the reasons for this is that the sample set size differs between week 4 and week 25. The sample size on week 4 is much smaller than that of week 25 which is why the standard error is relatively higher in week 4. This leads to larger confidence intervals in week 4 compared to week 25.
-As far as the data across the weeks is concerned, as sample size increases - confidence intervals shrink. The approval ratings for Joe Biden have reduced between week 4 and 25.
+Looking at the confidence interval, we can see that its size greatly differ between the different weeks. One of the reasons for this is that the sample set size differ. For example, the sample size of week 4 is much smaller than that of week 25 which is why the standard error is relatively higher in week 4. This leads to larger confidence intervals in week 4 compared to week 25.
+As far as the data across the weeks is concerned, the approval ratings for Joe Biden have decreases significantly over the weeks. While they started reasonably high, they have no gone into slight negative net approval. However, as the confidence interval shows, there is some uncertainty related to these polls as they are derived only from a small sample in comparison to the entire population. 
 
