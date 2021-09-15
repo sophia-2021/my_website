@@ -14,12 +14,13 @@ title: TfL bike sharing
 <script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
 
 
-<div id="visualizing-excess-monthly-and-weekly-rentals-of-tfl-bikes" class="section level2">
-<h2>Visualizing excess monthly and weekly rentals of TfL bikes</h2>
-<p>We will us TfL data on how many bikes were hired every single day to analyse the average monthly and weekly deviation from a three year average. We use year 2016-2019 to calculate the comparable monthly and weekly average and then plot the actual monthly and weekly average from 2016-present against that comparable average line. We can get the latest data by running the following:</p>
+<div id="visualizing-excess-monthly-and-weekly-rentals-of-tfl-bikes-in-london" class="section level2">
+<h2>Visualizing excess monthly and weekly rentals of TfL bikes in London</h2>
+<p>We will us the TfL data from the <a href="https://data.london.gov.uk/">London Datastore</a> on how many bikes were hired every single day to analyse the average monthly and weekly deviation from a three year average. We use year 2016-2019 to calculate the comparable monthly and weekly three year average and then plot the actual monthly and weekly average from 2016-present against that comparable average line. We do this to analyze the difference between actual rentals and what was expected, hence we can get an understanding of how often demand exceeds supply or supply exceeds demand of bike rentals.</p>
 </div>
 <div id="load-the-data" class="section level2">
 <h2>Load the data</h2>
+<p>We load the data from the website, clean the names and add new columns year, month and week.</p>
 <pre class="r"><code>url &lt;- &quot;https://data.london.gov.uk/download/number-bicycle-hires/ac29363e-e0cb-47cc-a97a-e216d900a6b0/tfl-daily-cycle-hires.xlsx&quot;
 
 # Download TFL data to temporary file
@@ -45,7 +46,9 @@ bike &lt;- bike0 %&gt;%
 </div>
 <div id="monthly-excess-rentals" class="section level2">
 <h2>Monthly excess rentals</h2>
-<p>First, we focus on the monthly rentals and plot the excess rentals (expected-actual rentals) faceted by year. The green coloring signals that in a particular time period there was more demand than anticipated while red means that there was less.</p>
+<p>First, we focus on the monthly rentals and plot the excess rentals (expected-actual rentals) per month faceted by year.
+As mentioned, we calculate the average per month from 2016-2019. We use this average as our expected rentals (blue line). Then we plot the actual rentals per month (black line) in comparison to that average. If the actual rentals exceeded the expected, meaning there was excess demand of bike rentals, we color the area of difference green. If there was excess supply, meaning that actual rentals fell short of what was expected, we color the area red. We do this using the <code>geom_ribbon()</code> function.
+This coloring makes the graph more intuitive and readable, as you can see the excess or shortage of demand compared to what was expected with one glimpse.</p>
 <pre class="r"><code># Calculate monthly bike change 
 monthly_expected_rentals &lt;- bike %&gt;% 
   filter(year %in% c(2016,2017,2018,2019)) %&gt;%  
@@ -96,11 +99,12 @@ and calculated between 2016-2019&quot;,
     x = &quot;&quot;,
     y = &quot;Bike rentals&quot;) +
   NULL</code></pre>
-<p><img src="/blogs/bike_sharing_files/figure-html/montly%20change%20in%20bikes%20-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><img src="/blogs/bike_sharing_files/figure-html/montly%20change%20in%20bikes%20-1.png" width="960" style="display: block; margin: auto;" /></p>
 </div>
 <div id="weekly-excess-rentals" class="section level2">
 <h2>Weekly excess rentals</h2>
-<p>Secondly, we look at the weekly average rentals. We shade the graph to signal the different quaters of a year. Additionally, we here look at percentage change from the expected level of weekly rentals rather than the absolute number of rentals as before.</p>
+<p>Secondly, we look at the weekly average rentals. Again we calculate the expected rentals per week using the average per month from 2016-2019. However, this time we calculate the percentage difference between the actual weekly rentals and what was expected instead of the total rentals.
+In addition, we shade the graph background to signal the different quarters of a year using the <code>geom_rect()</code> function. As before we again use the <code>geom_ribbon()</code> to shade the area red or green depending if the given week exceeded or fell short of the expected bike rentals. To facilitate readability, we also add the colored dashed at the x-axis to indicate whether a specific week had excess or shortage of demand using the <code>geom_rug()</code> function.</p>
 <pre class="r"><code># Calculate weekly bike change average
 weekly_expected_rentals &lt;- bike %&gt;% 
   filter(year %in% c(2016,2017,2018,2019)) %&gt;%  
@@ -162,4 +166,8 @@ ggplot(df1[1:292,], aes(week, change, group=1)) +
     y = &quot;&quot;) +
   NULL</code></pre>
 <p><img src="/blogs/bike_sharing_files/figure-html/weekly%20change%20in%20bikes-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="observations" class="section level2">
+<h2>Observations</h2>
+<p>This graph makes it easy to see how much bike rentals fluctuate from the expected weekly over time. Especially year 2020 appears to deviate quite a lot from the average. In a few weeks, the bike rentals fell very short of what was expected. This time period from approximately calendar week 10 to 20 corresponds to the first lock down period of the Covid-19 pandemic. Given that most people stayed at home, it makes sense that people were reluctant to rent bikes. Then over the summer, as regulations loosened, many people were interested in spending time outside and a bike ride of course would be considered safer than taking the bus or the tube when looking at the risk of potential infections, so actual rentals actually exceeded expected rentals.</p>
 </div>

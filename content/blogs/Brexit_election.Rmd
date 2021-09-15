@@ -84,4 +84,6 @@ ggplot(data=brexit_long, aes(x=Party_share, y=leave_share, group=Party, colour=P
   
 ```
 
+
+## Observations
 Looking at the graph, it is easy to see that the different political parties have different relationships with the percentage of leave voting in the Brexit referendum. For example, the percentage of *UKIP* in the general election appears to have a much stronger positive relationship, while percentage of *Lib Dems* in the general election appears to have a slight negative relationship to the percentage of leave voting. Hence, political party affiliation seems to be a valid indicator of likelihood to vote in favor of Brexit. 
