@@ -3,13 +3,30 @@ categories:
 - ""
 - ""
 date: "2017-10-31T22:42:51-05:00"
-description: Breakdown of voting tendency by party 
+description: Breakdown of voting tendency by party. 
 draft: false
 image: London_2.jpg
 keywords: ""
 slug: brexit_and_political_party
 title: Political affiliation and Brexit voting 
 ---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  message = FALSE, 
+  warning = FALSE, 
+  tidy=FALSE,     
+  size="small")   
+options(digits = 3)
+
+# default figure size
+knitr::opts_chunk$set(
+  fig.width=6.75, 
+  fig.height=6.75,
+  fig.align = "center"
+)
+
+```
 
 ```{r load-libraries, warning=FALSE, message=FALSE, echo=FALSE}
 library(tidyverse)  # Load ggplot2, dplyr, and all the other tidyverse packages
@@ -27,11 +44,7 @@ library(openintro)
 ```
 ## Analysis of Brexit voting results broked down by political affiliation 
 
-Using data manipulation and visualization skills, we use the Brexit results data to analyze the relationship between political affiliation and tendency of voting in favor of leaving the EU during the Brexit Referendum. 
-
-The data comes from [Elliott Morris](https://www.thecrosstab.com/), who cleaned it and made it available through his [DataCamp class on analysing election and polling data in R](https://www.datacamp.com/courses/analyzing-election-and-polling-data-in-r).
-
-The main outcome variable (or y) is `leave_share`, which is the percent of votes cast in favor of Brexit, or leaving the EU. Each row is a UK [parliament constituency](https://en.wikipedia.org/wiki/United_Kingdom_Parliament_constituencies).
+Using data manipulation and visualization skills, we use the Brexit results data to analyze the relationship between political affiliation and tendency of voting in favor of leaving the EU during the Brexit Referendum. The data comes from [Elliott Morris](https://www.thecrosstab.com/), who cleaned it and made it available through his [DataCamp class on analysing election and polling data in R](https://www.datacamp.com/courses/analyzing-election-and-polling-data-in-r).The main outcome variable (or y) is `leave_share`, which is the percent of votes cast in favor of Brexit, or leaving the EU. Each row is a UK [parliament constituency](https://en.wikipedia.org/wiki/United_Kingdom_Parliament_constituencies).
 
 # Load the data and skim it 
 First we load the data and explore it to get a feeling for the different variables. 
@@ -86,4 +99,4 @@ ggplot(data=brexit_long, aes(x=Party_share, y=leave_share, group=Party, colour=P
 
 
 ## Observations
-Looking at the graph, it is easy to see that the different political parties have different relationships with the percentage of leave voting in the Brexit referendum. For example, the percentage of *UKIP* in the general election appears to have a much stronger positive relationship, while percentage of *Lib Dems* in the general election appears to have a slight negative relationship to the percentage of leave voting. Hence, political party affiliation seems to be a valid indicator of likelihood to vote in favor of Brexit. 
+Looking at the graph, it is easy to see that the different political parties have different relationships with the percentage of leave voting in the Brexit referendum. For example, the percentage of **UKIP** in the general election appears to have a much stronger positive relationship, while percentage of **Lib Dems** in the general election appears to have a slight negative relationship to the percentage of leave voting. Hence, political party affiliation seems to be a valid indicator of likelihood to vote in favor of Brexit. 

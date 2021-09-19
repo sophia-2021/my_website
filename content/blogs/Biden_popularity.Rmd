@@ -10,10 +10,26 @@ keywords: ""
 slug: biden_popularity
 title: Popularity of President Biden over time 
 ---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  message = FALSE, 
+  warning = FALSE, 
+  tidy=FALSE,     
+  size="small")   
+options(digits = 3)
+
+# default figure size
+knitr::opts_chunk$set(
+  fig.width=6.75, 
+  fig.height=6.75,
+  fig.align = "center"
+)
+
+```
 
 # Analysis of President Biden's popularity over time 
 
-In this section, we will visualize President Biden's approval rate since his first day in office at the beginning of 2021. We do this to analysis how his popularity has changed over time of his inauguration. We will load the data from [fivethirtyeight.com](https://projects.fivethirtyeight.com/biden-approval-ratings) as it has detailed data on all polls that track the president's approval.
+In this section, we will visualize President Biden's approval rate since his first day in office at the beginning of 2021. We do this to analyze how his popularity has changed over time of his inauguration. We will load the data from [fivethirtyeight.com](https://projects.fivethirtyeight.com/biden-approval-ratings) as it has detailed data on all polls that track the president's approval.
 
 ```{r load-libraries, include=FALSE}
 library(tidyverse)  # Load ggplot2, dplyr, and all the other tidyverse packages
@@ -35,7 +51,6 @@ Fist we load the data and change the date type to lubridate to facilitate workin
 # Import approval polls data directly off fivethirtyeight website
 approval_pollist <- read_csv('https://projects.fivethirtyeight.com/biden-approval-data/approval_polllist.csv') 
 
-glimpse(approval_pollist)
 
 # Use `lubridate` to fix dates, as they are given as characters.
 approval_pollist <- approval_pollist %>% 
@@ -82,7 +97,7 @@ glimpse(approval_margins)
 
 ## Create the graph
 
-We essentially plot the mean net approval rate per week. We decide to filter the `subgroup=="Voters`. The single data points are plotted by points and connected with a line. In addition, we add a `geom_smooth()` line to show the trend. More over, we plot the confidence interval using the `geom_ribbon()` function and fill the area it in light grey to make if visually more appealing in the graph. With the help of `geom_hline()` we add a horizontal line at `x=0` which essentially shows the line at which approval rate would equal disapproval rate. 
+We essentially plot the mean net approval rate per week. We decide to filter the `subgroup=="Voters"`. The single data points are plotted by points and connected with a line. In addition, we add a `geom_smooth()` line to show the trend. Moreover, we plot the confidence interval using the `geom_ribbon()` function and fill the area in light grey to make if visually more appealing in the graph. With the help of `geom_hline()` we add a horizontal line at `x=0` which essentially shows the line at which approval rate would equal disapproval rate. 
 
 ```{r Bidens Approval Margins Graph, fig.width=8, fig.height=6, fig.align= "center"}
 #Create the graph
