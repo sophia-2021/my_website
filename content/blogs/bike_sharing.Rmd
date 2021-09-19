@@ -112,8 +112,8 @@ and calculated between 2016-2019",
 ```
 
 ## Weekly excess rentals 
-Secondly, we look at the weekly average rentals. Again we calculate the expected rentals per week using the average per month from 2016-2019. However, this time we calculate the percentage difference between the actual weekly rentals and what was expected instead of the total rentals. 
-In addition, we shade the graph background to signal the different quarters of a year using the `geom_rect()` function. As before we again use the `geom_ribbon()` to shade the area red or green depending if the given week exceeded or fell short of the expected bike rentals. To facilitate readability, we also add the colored dashed at the x-axis to indicate whether a specific week had excess or shortage of demand using the `geom_rug()` function.  
+Secondly, we look at the weekly average rentals. Again we calculate the expected rentals per week using the average per week from 2016-2019. However, this time we calculate the percentage difference between the actual weekly rentals and what was expected instead of the total rentals. 
+In addition, we shade the graph background to signal the different quarters of a year using the `geom_rect()` function. As before we again use the `geom_ribbon()` to shade the area red or green depending if the given week exceeded or fell short of the expected bike rentals. To facilitate readability, we also add the colored dashes at the x-axis to indicate whether a specific week had excess or shortage of demand using the `geom_rug()` function.  
 
 ````{r weekly change in bikes, fig.height = 6, fig.width = 10, fig.align= "center" }
 
@@ -181,4 +181,4 @@ ggplot(df1[1:292,], aes(week, change, group=1)) +
 ```
 
 ## Observations 
-This graph makes it easy to see how much bike rentals fluctuate from the expected weekly over time. Especially year 2020 appears to deviate quite a lot from the average. In a few weeks, the bike rentals fell very short of what was expected. This time period from approximately calendar week 10 to 20 corresponds to the first lock down period of the Covid-19 pandemic. Given that most people stayed at home, it makes sense that people were reluctant to rent bikes. Then over the summer, as regulations loosened, many people were interested in spending time outside and a bike ride of course would be considered safer than taking the bus or the tube when looking at the risk of potential infections, so actual rentals actually exceeded expected rentals.   
+This graph makes it easy to see how much bike rentals fluctuate from the expected weekly over time. Especially year 2020 appears to deviate quite a lot from the average. In a few weeks, the bike rentals fell very short of what was expected. This time period from approximately calendar week 10 to 20 corresponds to the first lockdown period of the Covid-19 pandemic. Given that most people stayed at home, it makes sense that people were reluctant to rent bikes. Then over the summer, as regulations loosened, many people were interested in spending time outside and a bike ride of course would be considered safer than taking the bus or the tube when looking at the risk of potential infections, so actual rentals actually exceeded expected rentals.   

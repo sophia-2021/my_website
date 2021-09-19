@@ -1,6 +1,6 @@
 baseURL: https://sophia-2021-portfolio.netlify.app/
 languageCode: en-us
-title: Portfolio website for Sophia 
+title: Portfolio website of Sophia 
 theme: forty
 googleAnalytics: ''
 disqusShortname: ''
@@ -36,7 +36,7 @@ params:
     text: Please visit [this page](/)
   favicon: favicon.ico
   footer:
-    copyright: sophia-2021
+    copyright: sophia-2021, LBS AM01
     enable: yes
     quicklinks:
       - alt: HTML5 UP

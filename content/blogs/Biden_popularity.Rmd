@@ -47,7 +47,7 @@ approval_pollist <- approval_pollist %>%
 
 ## Create a new data frame 
 
-We calculate the average net approval rate (approve - disapprove) for each week since President Biden got into office. Then we plot the net approval, along with its 95% confidence interval. We use the 'enddate' as date and facet by the subgroup to see the difference between adults, voters and all polls. 
+We calculate the average net approval rate (approve - disapprove) for each week since President Biden got into office. Then we plot the net approval, along with its 95% confidence interval. We use the 'enddate' as date.
 
 The net approval rate allows us to get a feeling of how popular Biden and his policy is within the US. For different polls, the percentage of people that state they *approve* and the percentage of people that *disapprove* for the given statements is calculated. We "net" these rates and then calculate the weekly mean across the pools taken within the respective week. In addition, we calculate a 95%  confidence interval for the net approval rate using the formula **CI: mean +/- (t-critical * SE)**.
 
@@ -126,6 +126,6 @@ approval_margins %>%
 ```
 
 ## Analysis 
-Looking at the confidence interval, we can see that its size greatly differ between the different weeks. One of the reasons for this is that the sample set size differ. For example, the sample size of week 4 is much smaller than that of week 25 which is why the standard error is relatively higher in week 4. This leads to larger confidence intervals in week 4 compared to week 25.
-As far as the data across the weeks is concerned, the approval ratings for Joe Biden have decreases significantly over the weeks. While they started reasonably high, they have no gone into slight negative net approval. However, as the confidence interval shows, there is some uncertainty related to these polls as they are derived only from a small sample in comparison to the entire population. 
+Looking at the confidence interval, we can see that its size greatly differ between the different weeks. One of the reasons for this is that the sample set sizes differ. For example, the sample size of week 4 is much smaller than that of week 25 which is why the standard error is relatively higher in week 4. This leads to larger confidence intervals in week 4 compared to week 25.
+As far as the data across the weeks is concerned, the approval ratings for Joe Biden have decreases significantly over the weeks. While they started reasonably high, they have now gone into slight negative net approval. However, as the confidence interval shows, there is some uncertainty related to these polls as they are derived only from a small sample in comparison to the entire population of the US.
 

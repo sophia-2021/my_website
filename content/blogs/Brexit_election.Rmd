@@ -27,11 +27,11 @@ library(openintro)
 ```
 ## Analysis of Brexit voting results broked down by political affiliation 
 
-Using data manipulation and visualization skills, we use the Brexit results data to analyze the relationship between political affiliation and tendency of voting in favor of leaving the EU. 
+Using data manipulation and visualization skills, we use the Brexit results data to analyze the relationship between political affiliation and tendency of voting in favor of leaving the EU during the Brexit Referendum. 
 
 The data comes from [Elliott Morris](https://www.thecrosstab.com/), who cleaned it and made it available through his [DataCamp class on analysing election and polling data in R](https://www.datacamp.com/courses/analyzing-election-and-polling-data-in-r).
 
-The main outcome variable (or y) is `leave_share`, which is the percent of votes cast in favour of Brexit, or leaving the EU. Each row is a UK [parliament constituency](https://en.wikipedia.org/wiki/United_Kingdom_Parliament_constituencies).
+The main outcome variable (or y) is `leave_share`, which is the percent of votes cast in favor of Brexit, or leaving the EU. Each row is a UK [parliament constituency](https://en.wikipedia.org/wiki/United_Kingdom_Parliament_constituencies).
 
 # Load the data and skim it 
 First we load the data and explore it to get a feeling for the different variables. 
@@ -45,7 +45,7 @@ skim(brexit)
 ```
 
 # Crete long format of data and plot 
-Next, we transform the data frame into the long format by assigning the party names to a new name **Party**. This makes it more efficient to plot the graph in the next step. We use `scale_color_manual()` to set the colors of the line and points to the official party colors. The official colors can be find using Google. We then adjust some remaining aesthetics of the graph such as changing the theme, setting the axis limits, and labeling the graph. 
+Next, we transform the data frame into the long format by assigning the party names to a new name **Party** using `pivot_longer()`. This makes it more efficient to plot the graph in the next step. We use `scale_color_manual()` to set the colors of the line and points to the official party colors. The official colors can be find using Google. We then adjust some remaining aesthetics of the graph such as changing the theme, setting the axis limits, and labeling the graph. 
 ```{r brexit graph 2, fig.width=10, fig.height=6}
 
 # Change to long format
