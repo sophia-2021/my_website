@@ -13,10 +13,10 @@ title: About me
 
 
 ## Introduction
-My name is Sophia and I grew up in Germany. This website was created to introduce myself and showcase some of the work I have done so far. On this page you can find a general introduction. On the other tabs you will be able to find some example analysis and visualizations I have been working on. In case you have any questions, feel free to get in touch over the contact details provided. 
+My name is Sophia and  this website was created to introduce myself and showcase some of the work I have done so far. On this page you can find a general introduction. On the other tabs you will be able to find some example analysis and visualizations I have been working on. In case you have any questions, feel free to get in touch over the contact details provided. 
 
 ## Education 
-As mentioned, I was born and raised in Germany. I attended primary and elementary school in a town close to Frankfurt. In addition, I went to a Gymnasium in that same town.
+ was born and raised in Germany. I attended primary and elementary school in a town close to Frankfurt. In addition, I went to a Gymnasium in that same town.
 
 ### High School
 During the tenth grade, I decided to take an exchange semester to a boarding school in the US. Little did I know that I would end up liking it so much, that I decided to stay and complete my high school there. After three years of boarding school, I graduated from high school in 2018 and returned to Germany for my university studies. 
